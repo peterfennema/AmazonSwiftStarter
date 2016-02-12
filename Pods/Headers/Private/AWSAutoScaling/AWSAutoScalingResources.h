@@ -1,0 +1,1 @@
+../../../AWSAutoScaling/AWSAutoScaling/AWSAutoScalingResources.h

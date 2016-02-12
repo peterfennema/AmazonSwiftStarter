@@ -1,0 +1,1 @@
+../../../AWSCognito/Cognito/AWSCognitoConflict.h

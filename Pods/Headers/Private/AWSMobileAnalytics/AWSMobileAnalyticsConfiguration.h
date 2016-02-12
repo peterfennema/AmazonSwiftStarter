@@ -1,0 +1,1 @@
+../../../AWSMobileAnalytics/AWSMobileAnalytics/AWSMobileAnalyticsConfiguration.h
