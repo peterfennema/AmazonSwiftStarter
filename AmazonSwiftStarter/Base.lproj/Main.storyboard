@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Welcome View Controller-->
@@ -17,23 +18,120 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rbi-Ab-TIV">
-                                <rect key="frame" x="283" y="480" width="34" height="30"/>
-                                <state key="normal" title="Start"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mac-keyboard" translatesAutoresizingMaskIntoConstraints="NO" id="2do-Kk-Hkx">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rbi-Ab-TIV" userLabel="Create Profile Button">
+                                <rect key="frame" x="220" y="470" width="160" height="40"/>
+                                <color key="backgroundColor" red="0.98039215686274506" green="0.41176470588235292" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="ADx-kl-f7F"/>
+                                    <constraint firstAttribute="width" constant="160" id="UT5-9j-Mti"/>
+                                </constraints>
+                                <state key="normal" title="Create Profile">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <segue destination="dX4-hP-kU0" kind="presentation" identifier="startSegue" id="Yar-5c-IWK"/>
+                                    <segue destination="dX4-hP-kU0" kind="presentation" identifier="editProfileSegue" id="Yar-5c-IWK"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZOk-2p-v1y" userLabel="Anonymous Sign In Button">
+                                <rect key="frame" x="220" y="470" width="160" height="40"/>
+                                <color key="backgroundColor" red="0.98039215690000003" green="0.41176470590000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="160" id="PUn-tZ-F01"/>
+                                    <constraint firstAttribute="height" constant="40" id="xHz-5P-k1c"/>
+                                </constraints>
+                                <state key="normal" title="Anonymous Sign In">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="didTapSignInButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fIB-0B-EuG"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cDM-6r-73W">
+                                <rect key="frame" x="160" y="200" width="280" height="120"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="9IV-rH-biz">
+                                        <rect key="frame" x="8" y="8" width="264" height="104"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="5"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.87843137250000003" green="0.89411764709999997" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="9IV-rH-biz" firstAttribute="top" secondItem="cDM-6r-73W" secondAttribute="topMargin" id="3HT-Cb-fd0"/>
+                                    <constraint firstAttribute="trailingMargin" secondItem="9IV-rH-biz" secondAttribute="trailing" id="3MN-a0-Eyi"/>
+                                    <constraint firstAttribute="bottomMargin" secondItem="9IV-rH-biz" secondAttribute="bottom" id="DPV-PT-aTO"/>
+                                    <constraint firstAttribute="width" constant="280" id="OtC-A8-10G"/>
+                                    <constraint firstItem="9IV-rH-biz" firstAttribute="leading" secondItem="cDM-6r-73W" secondAttribute="leadingMargin" id="crq-GT-KsC"/>
+                                    <constraint firstAttribute="height" constant="120" id="tHQ-AO-a7E"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Oops, something went wrong" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vKT-7s-J6Z" customClass="ErrorLabel" customModule="AmazonSwiftStarter" customModuleProvider="target">
+                                <rect key="frame" x="160" y="410" width="280" height="30"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="280" id="O6S-Kl-CSd"/>
+                                    <constraint firstAttribute="height" constant="30" id="wnt-r5-OOb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="cDM-6r-73W" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="6go-cc-Fjv"/>
                             <constraint firstItem="rbi-Ab-TIV" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ASm-Vz-H0d"/>
+                            <constraint firstItem="2do-Kk-Hkx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Cii-S0-O6c"/>
+                            <constraint firstItem="vKT-7s-J6Z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="DPR-0z-YzH"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="rbi-Ab-TIV" secondAttribute="bottom" constant="90" id="EeA-In-7hD"/>
+                            <constraint firstItem="ZOk-2p-v1y" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Ihg-AH-X9B"/>
+                            <constraint firstItem="rbi-Ab-TIV" firstAttribute="top" secondItem="vKT-7s-J6Z" secondAttribute="bottom" constant="30" id="KHQ-iL-S8v"/>
+                            <constraint firstItem="2do-Kk-Hkx" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="-20" id="Y65-n9-oqe"/>
+                            <constraint firstAttribute="trailing" secondItem="2do-Kk-Hkx" secondAttribute="trailing" id="bey-ph-QZ4"/>
+                            <constraint firstItem="ZOk-2p-v1y" firstAttribute="bottom" secondItem="rbi-Ab-TIV" secondAttribute="bottom" id="ewb-cJ-2xY"/>
+                            <constraint firstItem="vKT-7s-J6Z" firstAttribute="top" secondItem="cDM-6r-73W" secondAttribute="bottom" constant="90" id="iQw-dN-Dlx"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="2do-Kk-Hkx" secondAttribute="bottom" id="j2d-Np-ZtB"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="createProfileButton" destination="rbi-Ab-TIV" id="xHV-Qc-JlV"/>
+                        <outlet property="errorLabel" destination="vKT-7s-J6Z" id="YLu-gI-K4c"/>
+                        <outlet property="explanationLabel" destination="9IV-rH-biz" id="OOs-8A-tJi"/>
+                        <outlet property="signInButton" destination="ZOk-2p-v1y" id="Tk9-k9-Ri1"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="260" y="399"/>
         </scene>
         <!--Edit Profile View Controller-->
         <scene sceneID="eN6-xr-oG4">
@@ -123,4 +221,7 @@
             <point key="canvasLocation" x="442" y="1449"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="mac-keyboard" width="248" height="425"/>
+    </resources>
 </document>
