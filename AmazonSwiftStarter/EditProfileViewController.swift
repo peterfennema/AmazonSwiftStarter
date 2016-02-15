@@ -18,10 +18,20 @@ class EditProfileViewController: UIViewController {
     
     weak var delegate: EditProfileViewControllerDelegate?
     
+    @IBOutlet weak var nameTextField: UITextField!
+    
+    @IBOutlet weak var imageView: UIImageView!
+    
+    
     @IBAction func didTapDone(sender: UIButton) {
         if let delegate = delegate {
             delegate.editProfileViewControllerDidFinishEditing(self)
         }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        showMessage("Hallo", type: .Info, options: MessageOptions.Info)
     }
 
 }

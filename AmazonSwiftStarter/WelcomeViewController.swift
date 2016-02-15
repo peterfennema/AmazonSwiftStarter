@@ -46,16 +46,18 @@ class WelcomeViewController: UIViewController {
     
     
     @IBAction func didTapSignInButton(sender: UIButton) {
+        hideMessage()
         state = .Welcomed
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+        
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
         state = .Welcome
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "editProfileSegue" {
+            hideMessage()
             let destVC = segue.destinationViewController as! EditProfileViewController
             destVC.delegate = self
         }

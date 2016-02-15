@@ -12,5 +12,5 @@ import GSMessages
 struct MessageOptions {
 
     static let Info: [GSMessageOption] = [.TextNumberOfLines(5), .Height(150), .AutoHide(false)]
-
+    
 }

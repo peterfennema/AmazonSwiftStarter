@@ -4,6 +4,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Welcome View Controller-->
@@ -28,6 +29,7 @@
                                     <constraint firstAttribute="height" constant="40" id="ADx-kl-f7F"/>
                                     <constraint firstAttribute="width" constant="160" id="UT5-9j-Mti"/>
                                 </constraints>
+                                <size key="titleShadowOffset" width="2.2250738585072014e-308" height="0.0"/>
                                 <state key="normal" title="Create Profile">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -97,37 +99,68 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mac-keyboard" translatesAutoresizingMaskIntoConstraints="NO" id="HKV-Ot-T7Y">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OeQ-1S-hEf">
-                                <rect key="frame" x="282" y="488" width="37" height="30"/>
-                                <state key="normal" title="Done"/>
+                                <rect key="frame" x="260.5" y="520" width="80" height="40"/>
+                                <color key="backgroundColor" red="0.98039215690000003" green="0.41176470590000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="NAE-AX-pzG"/>
+                                    <constraint firstAttribute="height" constant="40" id="ruW-bx-lrM"/>
+                                </constraints>
+                                <state key="normal" title="Done">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="didTapDone:" destination="dX4-hP-kU0" eventType="touchUpInside" id="w6m-Dc-ofm"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0Js-QO-Rkv">
-                                <rect key="frame" x="180" y="98" width="240" height="240"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="unknownUser" translatesAutoresizingMaskIntoConstraints="NO" id="0Js-QO-Rkv">
+                                <rect key="frame" x="180" y="170" width="240" height="240"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="0Js-QO-Rkv" secondAttribute="height" multiplier="1:1" id="A59-Af-qyQ"/>
                                     <constraint firstAttribute="width" constant="240" id="Y5N-qG-eCN"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </imageView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="PeA-DI-30a">
-                                <rect key="frame" x="180.5" y="398" width="240" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Your name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="PeA-DI-30a">
+                                <rect key="frame" x="180.5" y="450" width="240" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                         </subviews>
-                        <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="PeA-DI-30a" firstAttribute="top" secondItem="0Js-QO-Rkv" secondAttribute="bottom" constant="60" id="2T9-aG-uZ6"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="HKV-Ot-T7Y" secondAttribute="trailing" constant="-20" id="2GC-To-7qO"/>
+                            <constraint firstItem="PeA-DI-30a" firstAttribute="top" secondItem="0Js-QO-Rkv" secondAttribute="bottom" constant="40" id="2T9-aG-uZ6"/>
+                            <constraint firstItem="HKV-Ot-T7Y" firstAttribute="top" secondItem="v1H-c0-0K8" secondAttribute="topMargin" id="Ehs-Tf-S8M"/>
                             <constraint firstItem="OeQ-1S-hEf" firstAttribute="centerX" secondItem="v1H-c0-0K8" secondAttribute="centerX" id="Uji-QP-Hig"/>
-                            <constraint firstItem="7Y9-xS-bPB" firstAttribute="top" secondItem="OeQ-1S-hEf" secondAttribute="bottom" constant="82" id="XWu-Is-aFi"/>
+                            <constraint firstItem="7Y9-xS-bPB" firstAttribute="top" secondItem="OeQ-1S-hEf" secondAttribute="bottom" constant="40" id="XWu-Is-aFi"/>
                             <constraint firstItem="0Js-QO-Rkv" firstAttribute="centerX" secondItem="v1H-c0-0K8" secondAttribute="centerX" id="dRh-CG-1fb"/>
+                            <constraint firstItem="HKV-Ot-T7Y" firstAttribute="leading" secondItem="v1H-c0-0K8" secondAttribute="leadingMargin" constant="-20" id="eUG-fn-IAC"/>
                             <constraint firstItem="PeA-DI-30a" firstAttribute="width" secondItem="0Js-QO-Rkv" secondAttribute="width" id="ehg-rj-DDl"/>
+                            <constraint firstItem="7Y9-xS-bPB" firstAttribute="top" secondItem="HKV-Ot-T7Y" secondAttribute="bottom" id="epu-gw-X6C"/>
                             <constraint firstItem="PeA-DI-30a" firstAttribute="centerX" secondItem="v1H-c0-0K8" secondAttribute="centerX" id="qPI-gq-e3g"/>
-                            <constraint firstItem="OeQ-1S-hEf" firstAttribute="top" secondItem="PeA-DI-30a" secondAttribute="bottom" constant="60" id="vf1-1R-aCa"/>
+                            <constraint firstItem="OeQ-1S-hEf" firstAttribute="top" secondItem="PeA-DI-30a" secondAttribute="bottom" constant="40" id="vf1-1R-aCa"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="imageView" destination="0Js-QO-Rkv" id="Z32-Vt-rQi"/>
+                        <outlet property="nameTextField" destination="PeA-DI-30a" id="3Sf-TE-7zT"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K2K-DS-zxd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -192,5 +225,6 @@
     </scenes>
     <resources>
         <image name="mac-keyboard" width="248" height="425"/>
+        <image name="unknownUser" width="320" height="320"/>
     </resources>
 </document>
