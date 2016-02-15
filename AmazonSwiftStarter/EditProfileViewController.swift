@@ -31,7 +31,34 @@ class EditProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        imageView.userInteractionEnabled = true
+        let tapRec = UITapGestureRecognizer(target: self, action: "didTapImageView:")
+        imageView.addGestureRecognizer(tapRec)
         showMessage("After tapping \"Done\" your name will be saved to DynamoDB. Your image will be saved to S3.", type: .Info, options: MessageOptions.Info)
     }
+    
+    func didTapImageView(recognizer: UIGestureRecognizer) {
+        let picker = UIImagePickerController()
+        picker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        picker.delegate = self
+        presentViewController(picker, animated: true, completion: nil)
+    }
 
+}
+
+
+extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        if let capturedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            self.imageView.image = capturedImage
+            picker.dismissViewControllerAnimated(true, completion: nil)
+        }
+    }
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        picker.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    
 }
