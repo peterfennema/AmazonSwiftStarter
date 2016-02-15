@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import IQKeyboardManagerSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         window!.backgroundColor = UIColor.whiteColor()
+        
+        IQKeyboardManager.sharedManager().enable = true
+        
         let welcomeViewController = window!.rootViewController as! WelcomeViewController
         welcomeViewController.delegate = self
         return true

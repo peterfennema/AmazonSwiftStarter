@@ -23,6 +23,7 @@ pod 'AWSSNS'
 pod 'AWSSQS'
 pod 'AWSCognito'
 pod 'GSMessages'
+pod 'IQKeyboardManagerSwift'
 
 end
 

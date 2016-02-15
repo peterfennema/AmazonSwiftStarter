@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--Welcome View Controller-->
@@ -103,11 +104,28 @@
                                     <action selector="didTapDone:" destination="dX4-hP-kU0" eventType="touchUpInside" id="w6m-Dc-ofm"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0Js-QO-Rkv">
+                                <rect key="frame" x="180" y="98" width="240" height="240"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="0Js-QO-Rkv" secondAttribute="height" multiplier="1:1" id="A59-Af-qyQ"/>
+                                    <constraint firstAttribute="width" constant="240" id="Y5N-qG-eCN"/>
+                                </constraints>
+                            </imageView>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="PeA-DI-30a">
+                                <rect key="frame" x="180.5" y="398" width="240" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="PeA-DI-30a" firstAttribute="top" secondItem="0Js-QO-Rkv" secondAttribute="bottom" constant="60" id="2T9-aG-uZ6"/>
                             <constraint firstItem="OeQ-1S-hEf" firstAttribute="centerX" secondItem="v1H-c0-0K8" secondAttribute="centerX" id="Uji-QP-Hig"/>
                             <constraint firstItem="7Y9-xS-bPB" firstAttribute="top" secondItem="OeQ-1S-hEf" secondAttribute="bottom" constant="82" id="XWu-Is-aFi"/>
+                            <constraint firstItem="0Js-QO-Rkv" firstAttribute="centerX" secondItem="v1H-c0-0K8" secondAttribute="centerX" id="dRh-CG-1fb"/>
+                            <constraint firstItem="PeA-DI-30a" firstAttribute="width" secondItem="0Js-QO-Rkv" secondAttribute="width" id="ehg-rj-DDl"/>
+                            <constraint firstItem="PeA-DI-30a" firstAttribute="centerX" secondItem="v1H-c0-0K8" secondAttribute="centerX" id="qPI-gq-e3g"/>
+                            <constraint firstItem="OeQ-1S-hEf" firstAttribute="top" secondItem="PeA-DI-30a" secondAttribute="bottom" constant="60" id="vf1-1R-aCa"/>
                         </constraints>
                     </view>
                 </viewController>
