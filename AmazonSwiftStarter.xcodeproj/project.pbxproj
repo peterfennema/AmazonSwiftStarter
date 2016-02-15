@@ -17,6 +17,7 @@
 		D08D01EC1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01EB1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift */; };
 		D0CA3B6B1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CA3B6A1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift */; };
 		D0E945311C71CC6100488ACD /* MessageOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E945301C71CC6100488ACD /* MessageOptions.swift */; };
+		D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		D08D01ED1C6DEA1C001DC4EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D0CA3B6A1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonWithActivityIndicator.swift; sourceTree = "<group>"; };
 		D0E945301C71CC6100488ACD /* MessageOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOptions.swift; sourceTree = "<group>"; };
+		D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComingSoonViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,8 +112,9 @@
 				D0EF50751C6E78E100D17FAD /* UI */,
 				D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */,
 				D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */,
-				D08D01DA1C6DEA1C001DC4EE /* Main.storyboard */,
 				D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */,
+				D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */,
+				D08D01DA1C6DEA1C001DC4EE /* Main.storyboard */,
 				D08D01DD1C6DEA1C001DC4EE /* Assets.xcassets */,
 				D08D01DF1C6DEA1C001DC4EE /* LaunchScreen.storyboard */,
 				D08D01E21C6DEA1C001DC4EE /* Info.plist */,
@@ -293,6 +296,7 @@
 				D08D01D91C6DEA1C001DC4EE /* WelcomeViewController.swift in Sources */,
 				D08D01D71C6DEA1C001DC4EE /* AppDelegate.swift in Sources */,
 				D0E945311C71CC6100488ACD /* MessageOptions.swift in Sources */,
+				D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */,
 				D03B30AB1C6E09E200094716 /* EditProfileViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

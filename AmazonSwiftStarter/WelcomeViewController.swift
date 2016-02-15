@@ -33,7 +33,7 @@ class WelcomeViewController: UIViewController {
                 signInButton.hidden = false
                 createProfileButton.hidden = true
             case .Welcomed:
-                showMessage("You are now signed in. An empty user profile with a unique userId has already been created behind the scenes in DynamoDB. The user data will be added in the next step.", type: GSMessageType.Info, options: MessageOptions.Info)
+                showMessage("You are now signed in. An empty user profile with a unique userId has already been created behind the scenes in DynamoDB.", type: GSMessageType.Info, options: MessageOptions.Info)
                 signInButton.hidden = true
                 createProfileButton.hidden = false
             }

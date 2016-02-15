@@ -166,10 +166,10 @@
             </objects>
             <point key="canvasLocation" x="1152" y="385"/>
         </scene>
-        <!--Item 2-->
+        <!--Coming Soon View Controller-->
         <scene sceneID="yNM-m8-w22">
             <objects>
-                <viewController id="Idz-3h-HB9" sceneMemberID="viewController">
+                <viewController id="Idz-3h-HB9" customClass="ComingSoonViewController" customModule="AmazonSwiftStarter" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Hk6-JF-B2h"/>
                         <viewControllerLayoutGuide type="bottom" id="GTf-rK-bIl"/>
@@ -179,16 +179,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 2" id="zUD-OU-ex1"/>
+                    <tabBarItem key="tabBarItem" systemItem="featured" id="zUD-OU-ex1"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S12-6u-exE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1263" y="1782"/>
         </scene>
-        <!--Item 1-->
+        <!--Coming Soon View Controller-->
         <scene sceneID="DS5-yn-XRV">
             <objects>
-                <viewController id="vKb-dB-BXp" sceneMemberID="viewController">
+                <viewController id="vKb-dB-BXp" customClass="ComingSoonViewController" customModule="AmazonSwiftStarter" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="M0W-xU-9Je"/>
                         <viewControllerLayoutGuide type="bottom" id="K8C-bc-ayy"/>
@@ -198,7 +198,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 1" id="qIh-KB-OUr"/>
+                    <tabBarItem key="tabBarItem" systemItem="featured" id="qIh-KB-OUr" userLabel="Feature 1"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8RN-zL-GCP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
