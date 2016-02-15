@@ -31,7 +31,7 @@ class EditProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        showMessage("Hallo", type: .Info, options: MessageOptions.Info)
+        showMessage("After tapping \"Done\" your name will be saved to DynamoDB. Your image will be saved to S3.", type: .Info, options: MessageOptions.Info)
     }
 
 }
