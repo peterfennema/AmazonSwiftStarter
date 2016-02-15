@@ -100,6 +100,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-AmazonSwiftStarter/AWSSNS.framework"
   install_framework "Pods-AmazonSwiftStarter/AWSSQS.framework"
   install_framework "Pods-AmazonSwiftStarter/AWSSimpleDB.framework"
+  install_framework "Pods-AmazonSwiftStarter/GSMessages.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-AmazonSwiftStarter/AWSAutoScaling.framework"
@@ -118,4 +119,5 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-AmazonSwiftStarter/AWSSNS.framework"
   install_framework "Pods-AmazonSwiftStarter/AWSSQS.framework"
   install_framework "Pods-AmazonSwiftStarter/AWSSimpleDB.framework"
+  install_framework "Pods-AmazonSwiftStarter/GSMessages.framework"
 fi

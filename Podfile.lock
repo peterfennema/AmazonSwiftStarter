@@ -30,6 +30,7 @@ PODS:
     - AWSCore (= 2.3.5)
   - AWSSQS (2.3.5):
     - AWSCore (= 2.3.5)
+  - GSMessages (1.2.0)
 
 DEPENDENCIES:
   - AWSAutoScaling
@@ -48,6 +49,7 @@ DEPENDENCIES:
   - AWSSimpleDB
   - AWSSNS
   - AWSSQS
+  - GSMessages
 
 SPEC CHECKSUMS:
   AWSAutoScaling: cf0ce6c6caa67bef1f52494e89e19cd28fca7f1e
@@ -66,5 +68,6 @@ SPEC CHECKSUMS:
   AWSSimpleDB: a523844c8b027c850688ffa6f79f33b06abbef9d
   AWSSNS: d95b17f039776ec0dd9cd9237313779d174b0215
   AWSSQS: f7a6f8cf225d469313150f8070e07bd7137218dd
+  GSMessages: 92a2aadb81bd7505e7375d7f70a58a2f49eb6e25
 
 COCOAPODS: 0.39.0

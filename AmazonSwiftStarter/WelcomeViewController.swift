@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import GSMessages
 
 protocol WelcomeViewControllerDelegate: class {
     
@@ -19,7 +20,6 @@ class WelcomeViewController: UIViewController {
     enum State {
         case Welcome
         case Welcomed
-        case Error
     }
 
 
@@ -29,25 +29,16 @@ class WelcomeViewController: UIViewController {
         didSet {
             switch state {
             case .Welcome:
-                explanationLabel.text = "Anonymous Sign In wil call AWS Cognito. The app will receive an identity token from the Cognito service and will store it on the device."
-                errorLabel.hidden = true
+                showMessage("\"Anonymous Sign In\" will call AWS Cognito. The app will receive an identity token from the Cognito Service and will store it on the device.", type: GSMessageType.Info, options: MessageOptions.Info)
                 signInButton.hidden = false
                 createProfileButton.hidden = true
             case .Welcomed:
-                explanationLabel.text = "You are now signed in. An empty user profile with a unique userId has already been created in DynamoDB. In the next step the user can add his username and a profile image. The username will be added to DynamoDB, the image will be uploaded to an S3 Bucket"
-                errorLabel.hidden = true
+                showMessage("You are now signed in. An empty user profile with a unique userId has already been created behind the scenes in DynamoDB. The user data will be added in the next step.", type: GSMessageType.Info, options: MessageOptions.Info)
                 signInButton.hidden = true
                 createProfileButton.hidden = false
-            case .Error:
-                errorLabel.hidden = false
             }
         }
     }
-    
-
-    @IBOutlet weak var explanationLabel: UILabel!
-    
-    @IBOutlet weak var errorLabel: ErrorLabel!
     
     @IBOutlet weak var signInButton: UIButton!
     
