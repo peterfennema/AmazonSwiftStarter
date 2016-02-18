@@ -51,6 +51,7 @@ extension AMZRemoteService: RemoteService {
     
     func updateCurrentUser(userData: UserData, completion: UserDataResultBlock) {
         assert(currentUser != nil, "currentUser should already exist when updateCurrentUser(..) is called")
+        assert(userData.userId == nil || userData.userId == currentUser!.userId, "Updating current user with a different userId is not allowed")
         NSOperationQueue().addOperationWithBlock {
             // simulate a network call delay
             self.randomWait()
