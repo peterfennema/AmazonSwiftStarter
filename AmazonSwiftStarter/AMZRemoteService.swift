@@ -16,7 +16,7 @@ class AMZRemoteService {
     
     private init() {}
     
-    static func defaultService() -> AMZRemoteService {
+    static func defaultService() -> RemoteService {
         if sharedInstance == nil {
             sharedInstance = AMZRemoteService()
         }
