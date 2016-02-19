@@ -22,10 +22,24 @@ class EditProfileViewController: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
     
+    @IBOutlet weak var doneButton: ButtonWithActivityIndicator!
     
     @IBAction func didTapDone(sender: UIButton) {
-        if let delegate = delegate {
-            delegate.editProfileViewControllerDidFinishEditing(self)
+        doneButton.startAnimating()
+        let userData = UserDataValue()
+        userData.name = nameTextField.text
+        if let image = imageView.image {
+            userData.imageData = UIImageJPEGRepresentation(image, 1.0)
+        } else {
+            userData.imageData = nil
+        }
+        RemoteServiceFactory.getDefaultService().updateCurrentUser(userData) { (userData, error) -> Void in
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.doneButton.stopAnimating()
+                if let delegate = self.delegate {
+                    delegate.editProfileViewControllerDidFinishEditing(self)
+                }
+            })
         }
     }
     

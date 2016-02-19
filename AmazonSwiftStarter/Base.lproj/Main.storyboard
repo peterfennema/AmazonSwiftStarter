@@ -102,7 +102,7 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mac-keyboard" translatesAutoresizingMaskIntoConstraints="NO" id="HKV-Ot-T7Y">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OeQ-1S-hEf">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OeQ-1S-hEf" customClass="ButtonWithActivityIndicator" customModule="AmazonSwiftStarter" customModuleProvider="target">
                                 <rect key="frame" x="260.5" y="520" width="80" height="40"/>
                                 <color key="backgroundColor" red="0.98039215690000003" green="0.41176470590000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -158,6 +158,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="doneButton" destination="OeQ-1S-hEf" id="M0K-Fj-eIG"/>
                         <outlet property="imageView" destination="0Js-QO-Rkv" id="Z32-Vt-rQi"/>
                         <outlet property="nameTextField" destination="PeA-DI-30a" id="3Sf-TE-7zT"/>
                     </connections>

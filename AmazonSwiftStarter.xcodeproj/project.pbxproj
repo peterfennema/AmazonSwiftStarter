@@ -15,6 +15,10 @@
 		D08D01DE1C6DEA1C001DC4EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DD1C6DEA1C001DC4EE /* Assets.xcassets */; };
 		D08D01E11C6DEA1C001DC4EE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DF1C6DEA1C001DC4EE /* LaunchScreen.storyboard */; };
 		D08D01EC1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01EB1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift */; };
+		D0BE4E1C1C7318F5007C2CEC /* RemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1A1C7318F5007C2CEC /* RemoteService.swift */; };
+		D0BE4E1D1C7318F5007C2CEC /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1B1C7318F5007C2CEC /* UserData.swift */; };
+		D0BE4E1F1C731C69007C2CEC /* RemoteServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */; };
+		D0BE4E221C731D15007C2CEC /* AMZRemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E211C731D15007C2CEC /* AMZRemoteService.swift */; };
 		D0CA3B6B1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CA3B6A1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift */; };
 		D0E945311C71CC6100488ACD /* MessageOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E945301C71CC6100488ACD /* MessageOptions.swift */; };
 		D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */; };
@@ -45,6 +49,10 @@
 		D08D01E71C6DEA1C001DC4EE /* AmazonSwiftStarterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmazonSwiftStarterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D08D01EB1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonSwiftStarterTests.swift; sourceTree = "<group>"; };
 		D08D01ED1C6DEA1C001DC4EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D0BE4E1A1C7318F5007C2CEC /* RemoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteService.swift; sourceTree = "<group>"; };
+		D0BE4E1B1C7318F5007C2CEC /* UserData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceFactory.swift; sourceTree = "<group>"; };
+		D0BE4E211C731D15007C2CEC /* AMZRemoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMZRemoteService.swift; sourceTree = "<group>"; };
 		D0CA3B6A1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonWithActivityIndicator.swift; sourceTree = "<group>"; };
 		D0E945301C71CC6100488ACD /* MessageOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOptions.swift; sourceTree = "<group>"; };
 		D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComingSoonViewController.swift; sourceTree = "<group>"; };
@@ -109,8 +117,11 @@
 		D08D01D51C6DEA1C001DC4EE /* AmazonSwiftStarter */ = {
 			isa = PBXGroup;
 			children = (
+				D0BE4E191C7318C2007C2CEC /* RemoteServiceApi */,
+				D0BE4E201C731CDE007C2CEC /* AmazonService */,
 				D0EF50751C6E78E100D17FAD /* UI */,
 				D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */,
+				D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */,
 				D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */,
 				D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */,
 				D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */,
@@ -129,6 +140,23 @@
 				D08D01ED1C6DEA1C001DC4EE /* Info.plist */,
 			);
 			path = AmazonSwiftStarterTests;
+			sourceTree = "<group>";
+		};
+		D0BE4E191C7318C2007C2CEC /* RemoteServiceApi */ = {
+			isa = PBXGroup;
+			children = (
+				D0BE4E1A1C7318F5007C2CEC /* RemoteService.swift */,
+				D0BE4E1B1C7318F5007C2CEC /* UserData.swift */,
+			);
+			name = RemoteServiceApi;
+			sourceTree = "<group>";
+		};
+		D0BE4E201C731CDE007C2CEC /* AmazonService */ = {
+			isa = PBXGroup;
+			children = (
+				D0BE4E211C731D15007C2CEC /* AMZRemoteService.swift */,
+			);
+			name = AmazonService;
 			sourceTree = "<group>";
 		};
 		D0EF50751C6E78E100D17FAD /* UI */ = {
@@ -293,11 +321,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0CA3B6B1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift in Sources */,
+				D0BE4E221C731D15007C2CEC /* AMZRemoteService.swift in Sources */,
 				D08D01D91C6DEA1C001DC4EE /* WelcomeViewController.swift in Sources */,
+				D0BE4E1D1C7318F5007C2CEC /* UserData.swift in Sources */,
 				D08D01D71C6DEA1C001DC4EE /* AppDelegate.swift in Sources */,
 				D0E945311C71CC6100488ACD /* MessageOptions.swift in Sources */,
+				D0BE4E1C1C7318F5007C2CEC /* RemoteService.swift in Sources */,
 				D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */,
 				D03B30AB1C6E09E200094716 /* EditProfileViewController.swift in Sources */,
+				D0BE4E1F1C731C69007C2CEC /* RemoteServiceFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -40,14 +40,20 @@ class WelcomeViewController: UIViewController {
         }
     }
     
-    @IBOutlet weak var signInButton: UIButton!
+    @IBOutlet weak var signInButton: ButtonWithActivityIndicator!
     
     @IBOutlet weak var createProfileButton: UIButton!
     
     
     @IBAction func didTapSignInButton(sender: UIButton) {
         hideMessage()
-        state = .Welcomed
+        signInButton.startAnimating()
+        RemoteServiceFactory.getDefaultService().createCurrentUser(nil) { (userData, error) -> Void in
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.state = .Welcomed
+                self.signInButton.stopAnimating()
+            })
+        }
     }
         
     override func viewDidAppear(animated: Bool) {
