@@ -26,7 +26,7 @@ class EditProfileViewController: UIViewController {
     
     @IBAction func didTapDone(sender: UIButton) {
         doneButton.startAnimating()
-        let userData = UserDataValue()
+        var userData = UserDataValue()
         userData.name = nameTextField.text
         if let image = imageView.image {
             userData.imageData = UIImageJPEGRepresentation(image, 1.0)
@@ -45,8 +45,10 @@ class EditProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let user = RemoteServiceFactory.getDefaultService().currentUser!
-        imageView.image = UIImage(data: user.imageData!)
+        guard let currentUser = RemoteServiceFactory.getDefaultService().currentUser else {
+            preconditionFailure("CurrentUser must be available")
+        }
+        updateImageViewWithImageData(currentUser.imageData)
         imageView.userInteractionEnabled = true
         let tapRec = UITapGestureRecognizer(target: self, action: "didTapImageView:")
         imageView.addGestureRecognizer(tapRec)
@@ -58,6 +60,14 @@ class EditProfileViewController: UIViewController {
         picker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         picker.delegate = self
         presentViewController(picker, animated: true, completion: nil)
+    }
+    
+    func updateImageViewWithImageData(data: NSData?) {
+        if data == nil {
+            imageView.image = UIImage(named: "unknownUser")
+        } else {
+            imageView.image = UIImage(data: data!)
+        }
     }
 
 }

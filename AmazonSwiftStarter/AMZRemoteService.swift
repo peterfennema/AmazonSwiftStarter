@@ -184,7 +184,7 @@ extension AMZRemoteService: RemoteService {
             } else {
                 // The new cognito identity token is now stored in the keychain.
                 // Create a new empty user object
-                let newUser = AMZUser()
+                var newUser = AMZUser()
                 // Copy the data from the parameter userData
                 if let userData = userData {
                     newUser.updateWithData(userData)
@@ -215,19 +215,25 @@ extension AMZRemoteService: RemoteService {
             preconditionFailure("currentUser should already exist when updateCurrentUser(..) is called")
         }
         precondition(userData.userId == nil || userData.userId == currentUser.userId, "Updating current user with a different userId is not allowed")
+        precondition(persistentUserId != nil, "A persistent userId should exist")
         
         // create a new empty user
-        let amzUser = AMZUser()
-        // copy the existing data of the current user
-        amzUser.updateWithData(currentUser)
-        // 
+        var amzUser = AMZUser()
+        // apply the new userData
         amzUser.updateWithData(userData)
+        // restore the userId of the current user
+        amzUser.userId = currentUser.userId
+        
+        if amzUser.isEqualTo(currentUser) {
+            return
+        }
+        
         self.saveAMZUser(amzUser) { (awsUserData, error) -> Void in
             if let error = error {
                 completion(userData: nil, error: error)
             } else {
-                // here we can be certain that the user was saved on AWS, so we update the local user instance
-                // There was no error, so we are guarantueed to have a awsUserData
+                // Here we can be certain that the user was saved on AWS, so we update the local user instance with the data returned from the server.
+                // There was no error, so we are guarantueed to have a awsUserData, safe to unwrap
                 let awsUserData = awsUserData!
                 self.currentUser!.updateWithData(awsUserData)
                 completion(userData: awsUserData, error: nil)
@@ -236,15 +242,35 @@ extension AMZRemoteService: RemoteService {
     }
     
     func fetchCurrentUser(completion: UserDataResultBlock ) {
-        assert(persistentUserId != nil)
+        precondition(persistentUserId != nil, "A persistent userId should exist")
+
+        // Task to download the image
         let downloadImageTask: AWSTask = createDownloadImageTask(persistentUserId!)
         
+        // Task to fetch the DynamoDB data
         let mapper = AWSDynamoDBObjectMapper.defaultDynamoDBObjectMapper()
         let loadFromDynamoDBTask: AWSTask = mapper.load(AMZUser.self, hashKey: persistentUserId!, rangeKey: nil)
         
-        let allTasks = [downloadImageTask, loadFromDynamoDBTask]
+        // First download the image
+        downloadImageTask.continueWithBlock { (task) -> AnyObject? in
+            if let error = task.error {
+                print("error downloading image: \(error)")
+            } else {
+                print(task.result)
+            }
+            return loadFromDynamoDBTask.continueWithBlock({ (dynamoTask) -> AnyObject? in
+                if let error = task.error {
+                    print(error)
+                } else {
+                    
+                }
+                return nil
+            })
+        }
+        /*
         AWSTask(forCompletionOfAllTasksWithResults: allTasks).continueWithBlock { (task) -> AnyObject? in
             if let error = task.error {
+                print(task.result)
                 completion(userData: nil, error: error)
                 return nil
             } else {
@@ -262,6 +288,7 @@ extension AMZRemoteService: RemoteService {
                 return nil
             }
         }
+*/
     }
     
 }
