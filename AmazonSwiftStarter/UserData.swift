@@ -20,16 +20,20 @@ protocol UserData: class {
 
 extension UserData {
     
-    func updateWithData(data: UserData) {
+    func updateWithData(data: UserData, ignoreNilInData: Bool = true) {
         
-        // We can only set a new userId, not overwrite an existing userId 
-        if self.userId == nil && data.userId != nil {
-            self.userId = data.userId
-        } 
+        if self.userId != data.userId {
+            if (data.userId == nil && !ignoreNilInData) || data.userId != nil  {
+                self.userId = data.userId
+            }
+        }
         
         if self.name != data.name {
-            self.name = data.name
+            if (data.name == nil && !ignoreNilInData) || data.name != nil  {
+                self.name = data.name
+            }
         }
+        
         if needsUpdate(self.imageData, withImageData: data.imageData) {
             self.imageData = data.imageData
         }

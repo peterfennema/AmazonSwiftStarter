@@ -45,6 +45,8 @@ class EditProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let user = RemoteServiceFactory.getDefaultService().currentUser!
+        imageView.image = UIImage(data: user.imageData!)
         imageView.userInteractionEnabled = true
         let tapRec = UITapGestureRecognizer(target: self, action: "didTapImageView:")
         imageView.addGestureRecognizer(tapRec)

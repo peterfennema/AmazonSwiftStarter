@@ -12,6 +12,8 @@ typealias UserDataResultBlock = (userData: UserData?, error: NSError?) -> Void
 
 protocol RemoteService {
     
+    var hasCurrentUserIdentity: Bool {get}
+    
     var currentUser: UserData? {get}
     
     func createCurrentUser(userData: UserData? , completion: UserDataResultBlock)
