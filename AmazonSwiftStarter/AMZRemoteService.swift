@@ -218,6 +218,7 @@ extension AMZRemoteService: RemoteService {
         updatedUser.userId = currentUser.userId
         
         if updatedUser.isEqualTo(currentUser) {
+            completion(error: nil)
             return
         }
         
@@ -260,7 +261,7 @@ extension AMZRemoteService: RemoteService {
                 } else {
                     if let user = dynamoTask.result as? AMZUser {
                         if didDownloadImage {
-                            let fileName = "\(self.currentUser!.userId!).png"
+                            let fileName = "\(self.persistentUserId!).png"
                             let fileURL = self.deviceDirectoryForDownloads!.URLByAppendingPathComponent(fileName)
                             user.imageData = NSData(contentsOfURL: fileURL)
                         }
@@ -272,6 +273,7 @@ extension AMZRemoteService: RemoteService {
                         completion(userData: user, error: nil)
                     } else {
                         // should probably never happen
+                        assertionFailure("No userData and no error, why?")
                         completion(userData: nil, error: nil)
                     }
                 }
