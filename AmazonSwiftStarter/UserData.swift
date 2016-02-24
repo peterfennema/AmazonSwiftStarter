@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol UserData: class {
+protocol UserData {
     
     var userId: String?  {get set}
     
@@ -18,39 +18,43 @@ protocol UserData: class {
     
 }
 
-extension UserData {
+extension UserData  {
     
-    func updateWithData(data: UserData) {
-        
-        // We can only set a new userId, not overwrite an existing userId 
-        if self.userId == nil && data.userId != nil {
-            self.userId = data.userId
-        } 
-        
-        if self.name != data.name {
-            self.name = data.name
-        }
-        if needsUpdate(self.imageData, withImageData: data.imageData) {
-            self.imageData = data.imageData
-        }
+    func isEqualTo(other: UserData) -> Bool {
+        return isDataEqualTo(other) && isImageDataEqualTo(other.imageData)
+    }
+    
+    func isDataEqualTo(otherData: UserData) -> Bool {
+        let dataEqual = self.userId == otherData.userId &&
+            self.name == otherData.name
+        return dataEqual
+    }
+    
+    func isImageDataEqualTo(otherImageData: NSData?) -> Bool {
+        let imagesEqual = self.imageData == otherImageData ||
+            (self.imageData != nil && otherImageData != nil && self.imageData!.isEqualToData(otherImageData!))
+        return imagesEqual
     }
     
     
-    private func needsUpdate(imageData1: NSData?, withImageData imageData2: NSData?) -> Bool {
-        if (imageData1 == nil && imageData2 == nil) {
-            return false
+    mutating func updateWithData(other: UserData) {
+        
+        if self.userId != other.userId {
+            self.userId = other.userId
         }
-        if let imageData1 = imageData1, imageData2 = imageData2 {
-            if imageData1.isEqualToData(imageData2) {
-                return false
-            }
+        
+        if self.name != other.name {
+            self.name = other.name
         }
-        return true
+        
+        if !isImageDataEqualTo(other.imageData) {
+            self.imageData = other.imageData
+        }
     }
     
 }
 
-class UserDataValue: UserData {
+struct UserDataValue: UserData {
     
     var userId: String?
     

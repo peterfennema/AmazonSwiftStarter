@@ -65,21 +65,60 @@
                                     <action selector="didTapSignInButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fIB-0B-EuG"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tke-dN-TrK" userLabel="Continue Button" customClass="ButtonWithActivityIndicator" customModule="AmazonSwiftStarter" customModuleProvider="target">
+                                <rect key="frame" x="220" y="369.5" width="160" height="40"/>
+                                <color key="backgroundColor" red="0.98039215690000003" green="0.41176470590000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="dis-lU-kNE"/>
+                                    <constraint firstAttribute="width" constant="160" id="fzH-uv-M4v"/>
+                                </constraints>
+                                <state key="normal" title="Continue">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="didTapContinueButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8th-cl-QKv"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="or" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jwX-kE-3G3">
+                                <rect key="frame" x="292" y="429.5" width="16" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="1lT-hO-GMZ">
+                                <rect key="frame" x="281.5" y="312.5" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Tke-dN-TrK" firstAttribute="top" secondItem="1lT-hO-GMZ" secondAttribute="bottom" constant="20" id="4Cm-KB-3ap"/>
                             <constraint firstItem="rbi-Ab-TIV" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ASm-Vz-H0d"/>
                             <constraint firstItem="2do-Kk-Hkx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Cii-S0-O6c"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="rbi-Ab-TIV" secondAttribute="bottom" constant="90" id="EeA-In-7hD"/>
                             <constraint firstItem="ZOk-2p-v1y" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Ihg-AH-X9B"/>
+                            <constraint firstItem="Tke-dN-TrK" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="JeG-cb-0j7"/>
+                            <constraint firstItem="ZOk-2p-v1y" firstAttribute="top" secondItem="jwX-kE-3G3" secondAttribute="bottom" constant="20" id="UgF-9B-6th"/>
                             <constraint firstItem="2do-Kk-Hkx" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="-20" id="Y65-n9-oqe"/>
                             <constraint firstAttribute="trailing" secondItem="2do-Kk-Hkx" secondAttribute="trailing" id="bey-ph-QZ4"/>
+                            <constraint firstItem="jwX-kE-3G3" firstAttribute="top" secondItem="Tke-dN-TrK" secondAttribute="bottom" constant="20" id="bvy-HX-GFX"/>
                             <constraint firstItem="ZOk-2p-v1y" firstAttribute="bottom" secondItem="rbi-Ab-TIV" secondAttribute="bottom" id="ewb-cJ-2xY"/>
+                            <constraint firstItem="1lT-hO-GMZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="hUY-gx-bqR"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="2do-Kk-Hkx" secondAttribute="bottom" id="j2d-Np-ZtB"/>
+                            <constraint firstItem="jwX-kE-3G3" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jIj-bV-svT"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="1lT-hO-GMZ" id="cJh-aT-UBF"/>
+                        <outlet property="continueButton" destination="Tke-dN-TrK" id="6cE-to-VcI"/>
                         <outlet property="createProfileButton" destination="rbi-Ab-TIV" id="xHV-Qc-JlV"/>
+                        <outlet property="orLabel" destination="jwX-kE-3G3" id="NSp-pD-CtY"/>
                         <outlet property="signInButton" destination="ZOk-2p-v1y" id="Tk9-k9-Ri1"/>
                     </connections>
                 </viewController>
