@@ -14,30 +14,3 @@ protocol RemoteServiceWithTestTools: RemoteService {
     func removeCurrentUser()
     
 }
-
-class AMZRemoteServiceWithTestTools: AMZRemoteService, RemoteServiceWithTestTools {
-
-    private static var sharedInstance: AMZRemoteServiceWithTestTools?
-    
-    static func defaultService() -> RemoteServiceWithTestTools {
-        if sharedInstance == nil {
-            sharedInstance = AMZRemoteServiceWithTestTools()
-            sharedInstance!.configure()
-        }
-        return sharedInstance!
-    }
-    
-    func removeCurrentUser() {
-        identityProvider?.clearKeychain()
-        persistentUserId = nil
-        currentUser = nil
-    }
-
-}
-
-class RemoteServiceWithTestToolsFactory {
-    
-    static func getDefaultService() -> RemoteServiceWithTestTools {
-        return AMZRemoteServiceWithTestTools.defaultService()
-    }
-}

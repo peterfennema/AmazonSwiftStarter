@@ -41,9 +41,6 @@ class AMZRemoteService {
     
     private static var sharedInstance: AMZRemoteService?
     
-    // MARK: - Lifecycle
-    
-    init() {}
     
     // MARK: - Functions
     
@@ -118,7 +115,7 @@ class AMZRemoteService {
             preconditionFailure("You are trying to create an UploadImageTask, but the user has no imageData")
         }
         
-        // Save the image as a file. The filename is
+        // Save the image as a file. The filename is the userId
         let fileName = "\(userId).png"
         let fileURL = deviceDirectoryForUploads!.URLByAppendingPathComponent(fileName)
         imageData.writeToFile(fileURL.path!, atomically: true)
@@ -146,8 +143,6 @@ class AMZRemoteService {
         let transferManager = AWSS3TransferManager.defaultS3TransferManager()
         return transferManager.download(downloadRequest)
     }
-
-
     
 }
 
@@ -217,6 +212,7 @@ extension AMZRemoteService: RemoteService {
         // restore the userId of the current user
         updatedUser.userId = currentUser.userId
         
+        // If there are no changes, there is no need to update.
         if updatedUser.isEqualTo(currentUser) {
             completion(error: nil)
             return
@@ -252,7 +248,6 @@ extension AMZRemoteService: RemoteService {
                 print("Error downloading image: \(error)")
             } else {
                 didDownloadImage = true
-                print(imageTask.result) // is nil in the case of an error
             }
             // Download the data from DynamoDB
             loadFromDynamoDBTask.continueWithBlock({ (dynamoTask) -> AnyObject? in

@@ -102,7 +102,7 @@ class WelcomeViewController: UIViewController {
                     print(error)
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.state = .FetchedUserProfile
+                    self.state = .FetchedUserProfile
                 })
             })
         } else {
