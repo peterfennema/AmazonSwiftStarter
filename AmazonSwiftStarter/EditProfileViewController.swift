@@ -33,7 +33,7 @@ class EditProfileViewController: UIViewController {
         } else {
             userData.imageData = nil
         }
-        RemoteServiceFactory.getDefaultService().updateCurrentUser(userData) { (userData, error) -> Void in
+        RemoteServiceFactory.getDefaultService().updateCurrentUser(userData) { (error) -> Void in
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.doneButton.stopAnimating()
                 if let delegate = self.delegate {

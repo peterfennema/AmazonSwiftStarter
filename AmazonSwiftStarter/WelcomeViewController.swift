@@ -77,7 +77,7 @@ class WelcomeViewController: UIViewController {
     @IBAction func didTapSignInButton(sender: UIButton) {
         hideMessage()
         signInButton.startAnimating()
-        RemoteServiceFactory.getDefaultService().createCurrentUser(nil) { (userData, error) -> Void in
+        RemoteServiceFactory.getDefaultService().createCurrentUser(nil) { (error) -> Void in
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.state = .Welcomed
                 self.signInButton.stopAnimating()

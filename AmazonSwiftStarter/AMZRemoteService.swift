@@ -19,11 +19,11 @@ class AMZRemoteService {
         return persistentUserId != nil
     }
 
-    private (set) var currentUser: UserData?
+    var currentUser: UserData?
     
     // MARK: - Properties
 
-    private var persistentUserId: String? {
+    var persistentUserId: String? {
         set {
             NSUserDefaults.standardUserDefaults().setValue(newValue, forKey: "userId")
             NSUserDefaults.standardUserDefaults().synchronize()
@@ -33,7 +33,7 @@ class AMZRemoteService {
         }
     }
     
-    private var identityProvider: AWSCognitoCredentialsProvider?
+    private (set) var identityProvider: AWSCognitoCredentialsProvider?
     
     private var deviceDirectoryForUploads: NSURL?
     
@@ -43,7 +43,7 @@ class AMZRemoteService {
     
     // MARK: - Lifecycle
     
-    private init() {}
+    init() {}
     
     // MARK: - Functions
     
@@ -55,7 +55,7 @@ class AMZRemoteService {
         return sharedInstance!
     }
     
-    private func configure() {
+    func configure() {
         identityProvider = AWSCognitoCredentialsProvider(
             regionType: AMZConstants.COGNITO_REGIONTYPE,
             identityPoolId: AMZConstants.COGNITO_IDENTITY_POOL_ID)
@@ -87,35 +87,30 @@ class AMZRemoteService {
     }
     
     
-    private func saveAMZUser(user: AMZUser, completion: UserDataResultBlock)  {
+    func saveAMZUser(user: AMZUser, completion: ErrorResultBlock)  {
         precondition(user.userId != nil, "You should provide a user object with a userId when saving a user")
-        
-        // Uploading the user image and saving the other user data are done in parallel, we will store all parallel tasks in this array.
-        var allTasks = [AWSTask]()
         
         let mapper = AWSDynamoDBObjectMapper.defaultDynamoDBObjectMapper()
         let saveToDynamoDBTask: AWSTask = mapper.save(user)
-        allTasks.append(saveToDynamoDBTask)
-
-        // If there is an image create a task to save it to S3
-        if user.imageData != nil, let task = createUploadImageTask(user) {
-            allTasks.append(task)
+        
+        if user.imageData == nil {
+            saveToDynamoDBTask.continueWithBlock({ (task) -> AnyObject? in
+                completion(error: task.error)
+                return nil
+            })
+        } else {
+            saveToDynamoDBTask.continueWithSuccessBlock({ (task) -> AnyObject? in
+                return self.createUploadImageTask(user)
+            }).continueWithBlock({ (task) -> AnyObject? in
+                completion(error: task.error)
+                return nil
+            })
         }
-
-        // Execute all tasks in parallel
-        AWSTask(forCompletionOfAllTasksWithResults: allTasks).continueWithBlock { (task) -> AnyObject? in
-            if let error = task.error {
-                completion(userData: nil, error: error)
-            } else {
-                // TODO: Return the data that is really stored on the server, instead of the user 
-                // TODO: Avoid the situation that there is no error and no userdata by returning an own error type
-                completion(userData: user, error: nil)
-            }
-            return nil
-        }
+            
     }
+    
 
-    private func createUploadImageTask(user: UserData) -> AWSTask? {
+    private func createUploadImageTask(user: UserData) -> AWSTask {
         guard let userId = user.userId else {
             preconditionFailure("You should provide a user object with a userId when uploading a user image")
         }
@@ -161,7 +156,7 @@ class AMZRemoteService {
 
 extension AMZRemoteService: RemoteService {
     
-    func createCurrentUser(userData: UserData? , completion: UserDataResultBlock ) {
+    func createCurrentUser(userData: UserData? , completion: ErrorResultBlock ) {
         precondition(currentUser == nil, "currentUser should not exist when createCurrentUser(..) is called")
         precondition(userData == nil || userData!.userId == nil, "You can not create a user with a given userId. UserId's are assigned automatically")
         precondition(persistentUserId == nil, "A persistent userId should not yet exist")
@@ -180,10 +175,10 @@ extension AMZRemoteService: RemoteService {
         let task: AWSTask = identityProvider.getIdentityId()
         task.continueWithBlock { (task) -> AnyObject? in
             if let error = task.error {
-                completion(userData: nil, error: error)
+                completion(error: error)
             } else {
                 // The new cognito identity token is now stored in the keychain.
-                // Create a new empty user object
+                // Create a new empty user object of type AMZUser
                 var newUser = AMZUser()
                 // Copy the data from the parameter userData
                 if let userData = userData {
@@ -192,17 +187,15 @@ extension AMZRemoteService: RemoteService {
                 // create a unique ID for the new user
                 newUser.userId = NSUUID().UUIDString
                 // Now save the data on AWS. This will save the image on S3, the other data in DynamoDB
-                self.saveAMZUser(newUser) { (awsUserData, error) -> Void in
+                self.saveAMZUser(newUser) { (error) -> Void in
                     if let error = error {
-                        completion(userData: nil, error: error)
+                        completion(error: error)
                     } else {
-                        // here we can be certain that the user was saved on AWS, so we update the local user instance
-                        // There was no error, so we are guarantueed to have a awsUserData
-                        let awsUserData = awsUserData!
-                        self.currentUser = awsUserData
-                        self.persistentUserId = awsUserData.userId
-                        completion(userData: awsUserData, error: nil)
-                     }
+                        // Here we can be certain that the user was saved on AWS, so we set the local user instance
+                        self.currentUser = newUser
+                        self.persistentUserId = newUser.userId
+                        completion(error: nil)
+                    }
                 }
             }
             return nil
@@ -210,40 +203,39 @@ extension AMZRemoteService: RemoteService {
     }
 
     
-    func updateCurrentUser(userData: UserData, completion: UserDataResultBlock) {
-        guard let currentUser = currentUser else {
+    func updateCurrentUser(userData: UserData, completion: ErrorResultBlock) {
+        guard var currentUser = currentUser else {
             preconditionFailure("currentUser should already exist when updateCurrentUser(..) is called")
         }
         precondition(userData.userId == nil || userData.userId == currentUser.userId, "Updating current user with a different userId is not allowed")
         precondition(persistentUserId != nil, "A persistent userId should exist")
         
         // create a new empty user
-        var amzUser = AMZUser()
+        var updatedUser = AMZUser()
         // apply the new userData
-        amzUser.updateWithData(userData)
+        updatedUser.updateWithData(userData)
         // restore the userId of the current user
-        amzUser.userId = currentUser.userId
+        updatedUser.userId = currentUser.userId
         
-        if amzUser.isEqualTo(currentUser) {
+        if updatedUser.isEqualTo(currentUser) {
             return
         }
         
-        self.saveAMZUser(amzUser) { (awsUserData, error) -> Void in
+        self.saveAMZUser(updatedUser) { (error) -> Void in
             if let error = error {
-                completion(userData: nil, error: error)
+                completion(error: error)
             } else {
-                // Here we can be certain that the user was saved on AWS, so we update the local user instance with the data returned from the server.
-                // There was no error, so we are guarantueed to have a awsUserData, safe to unwrap
-                let awsUserData = awsUserData!
-                self.currentUser!.updateWithData(awsUserData)
-                completion(userData: awsUserData, error: nil)
+                // Here we can be certain that the user was saved on AWS, so we update the local user instance.
+                currentUser.updateWithData(updatedUser)
+                completion(error: nil)
             }
         }
     }
     
+    
     func fetchCurrentUser(completion: UserDataResultBlock ) {
         precondition(persistentUserId != nil, "A persistent userId should exist")
-
+        
         // Task to download the image
         let downloadImageTask: AWSTask = createDownloadImageTask(persistentUserId!)
         
@@ -251,44 +243,42 @@ extension AMZRemoteService: RemoteService {
         let mapper = AWSDynamoDBObjectMapper.defaultDynamoDBObjectMapper()
         let loadFromDynamoDBTask: AWSTask = mapper.load(AMZUser.self, hashKey: persistentUserId!, rangeKey: nil)
         
-        // First download the image
-        downloadImageTask.continueWithBlock { (task) -> AnyObject? in
-            if let error = task.error {
-                print("error downloading image: \(error)")
+        // Download the image
+        downloadImageTask.continueWithBlock { (imageTask) -> AnyObject? in
+            var didDownloadImage = false
+            if let error = imageTask.error {
+                // If there is an error we will ignore it, it's not fatal. Maybe there is no user image.
+                print("Error downloading image: \(error)")
             } else {
-                print(task.result)
+                didDownloadImage = true
+                print(imageTask.result) // is nil in the case of an error
             }
-            return loadFromDynamoDBTask.continueWithBlock({ (dynamoTask) -> AnyObject? in
-                if let error = task.error {
-                    print(error)
+            // Download the data from DynamoDB
+            loadFromDynamoDBTask.continueWithBlock({ (dynamoTask) -> AnyObject? in
+                if let error = dynamoTask.error {
+                    completion(userData: nil, error: error)
                 } else {
-                    
+                    if let user = dynamoTask.result as? AMZUser {
+                        if didDownloadImage {
+                            let fileName = "\(self.currentUser!.userId!).png"
+                            let fileURL = self.deviceDirectoryForDownloads!.URLByAppendingPathComponent(fileName)
+                            user.imageData = NSData(contentsOfURL: fileURL)
+                        }
+                        if var currentUser = self.currentUser {
+                            currentUser.updateWithData(user)
+                        } else {
+                            self.currentUser = user
+                        }
+                        completion(userData: user, error: nil)
+                    } else {
+                        // should probably never happen
+                        completion(userData: nil, error: nil)
+                    }
                 }
                 return nil
             })
+            return nil
         }
-        /*
-        AWSTask(forCompletionOfAllTasksWithResults: allTasks).continueWithBlock { (task) -> AnyObject? in
-            if let error = task.error {
-                print(task.result)
-                completion(userData: nil, error: error)
-                return nil
-            } else {
-                if let tasks = task.result, let userData = tasks[1] as? AMZUser {
-                    if self.currentUser == nil {
-                        self.currentUser = userData
-                    } else {
-                        self.currentUser!.updateWithData(userData)
-                    }
-                    let fileName = "\(self.currentUser!.userId!).png"
-                    let fileURL = self.deviceDirectoryForDownloads!.URLByAppendingPathComponent(fileName)
-                    self.currentUser!.imageData = NSData(contentsOfURL: fileURL)
-                    completion(userData: self.currentUser!, error: nil)
-                }
-                return nil
-            }
-        }
-*/
     }
     
 }
