@@ -116,7 +116,7 @@ class AMZRemoteService {
         }
         
         // Save the image as a file. The filename is the userId
-        let fileName = "\(userId).png"
+        let fileName = "\(userId).jpg"
         let fileURL = deviceDirectoryForUploads!.URLByAppendingPathComponent(fileName)
         imageData.writeToFile(fileURL.path!, atomically: true)
         
@@ -132,7 +132,7 @@ class AMZRemoteService {
     private func createDownloadImageTask(userId: String) -> AWSTask {
         
         // The location where the downloaded file has to be saved on the device
-        let fileName = "\(userId).png"
+        let fileName = "\(userId).jpg"
         let fileURL = deviceDirectoryForDownloads!.URLByAppendingPathComponent(fileName)
         
         // Create a task to download the file
@@ -256,7 +256,7 @@ extension AMZRemoteService: RemoteService {
                 } else {
                     if let user = dynamoTask.result as? AMZUser {
                         if didDownloadImage {
-                            let fileName = "\(self.persistentUserId!).png"
+                            let fileName = "\(self.persistentUserId!).jpg"
                             let fileURL = self.deviceDirectoryForDownloads!.URLByAppendingPathComponent(fileName)
                             user.imageData = NSData(contentsOfURL: fileURL)
                         }

@@ -33,7 +33,7 @@ class EditProfileViewController: UIViewController {
         userData.name = nameTextField.text
         if imageModified {
             if let image = imageView.image {
-                userData.imageData = UIImageJPEGRepresentation(image, 1.0)
+                userData.imageData = UIImageJPEGRepresentation(image, 0.4)
             } else {
                 userData.imageData = nil
             }
