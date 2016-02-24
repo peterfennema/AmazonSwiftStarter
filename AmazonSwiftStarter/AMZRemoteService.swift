@@ -33,7 +33,7 @@ class AMZRemoteService {
 extension AMZRemoteService: RemoteService {
     
     
-    func createCurrentUser(userData: UserData? , completion: UserDataResultBlock) {
+    func createCurrentUser(userData: UserData? , completion: ErrorResultBlock) {
         assert(currentUser == nil, "currentUser should not exist when createCurrentUser(..) is called")
         assert(userData == nil || userData!.userId == nil, "You can not create a user with a given userId. UserIds are assigned automatically")
         NSOperationQueue().addOperationWithBlock {
@@ -45,18 +45,18 @@ extension AMZRemoteService: RemoteService {
             }
             newUserData.userId = NSUUID().UUIDString
             self.currentUser = newUserData
-            completion(userData: self.currentUser, error: nil)
+            completion(error: nil)
         }
     }
     
-    func updateCurrentUser(userData: UserData, completion: UserDataResultBlock) {
+    func updateCurrentUser(userData: UserData, completion: ErrorResultBlock) {
         assert(currentUser != nil, "currentUser should already exist when updateCurrentUser(..) is called")
         assert(userData.userId == nil || userData.userId == currentUser!.userId, "Updating current user with a different userId is not allowed")
         NSOperationQueue().addOperationWithBlock {
             // simulate a network call delay
             self.randomWait()
             self.currentUser!.updateWithData(userData)
-            completion(userData: self.currentUser, error: nil)
+            completion(error: nil)
         }
     }
     
