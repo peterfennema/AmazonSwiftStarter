@@ -26,7 +26,7 @@ class AMZUser: AWSDynamoDBObjectModel ,AWSDynamoDBModeling, UserData {
     }
     
     static func dynamoDBTableName() -> String! {
-        return "AmazonSwiftStarterUsers"
+        return AMZConstants.DYNAMODB_USERS_TABLE
     }
     
     static func hashKeyAttribute() -> String! {
