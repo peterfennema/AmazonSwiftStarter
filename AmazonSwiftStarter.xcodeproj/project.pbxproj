@@ -20,7 +20,6 @@
 		D0BE4E1F1C731C69007C2CEC /* RemoteServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */; };
 		D0BE4E221C731D15007C2CEC /* AMZRemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E211C731D15007C2CEC /* AMZRemoteService.swift */; };
 		D0CA3B6B1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CA3B6A1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift */; };
-		D0CEAA351C847CA00041BFFA /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = D0CEAA341C847CA00041BFFA /* README.md */; };
 		D0E945311C71CC6100488ACD /* MessageOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E945301C71CC6100488ACD /* MessageOptions.swift */; };
 		D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */; };
 /* End PBXBuildFile section */
@@ -332,7 +331,6 @@
 				D0BE4E1C1C7318F5007C2CEC /* RemoteService.swift in Sources */,
 				D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */,
 				D03B30AB1C6E09E200094716 /* EditProfileViewController.swift in Sources */,
-				D0CEAA351C847CA00041BFFA /* README.md in Sources */,
 				D0BE4E1F1C731C69007C2CEC /* RemoteServiceFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
