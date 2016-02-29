@@ -149,11 +149,11 @@
 			isa = PBXGroup;
 			children = (
 				D072CDA61C7CB05E0084D2BA /* RemoteServiceTest.swift */,
-				D08D01ED1C6DEA1C001DC4EE /* Info.plist */,
-				D072CDA81C7CB8260084D2BA /* RemoteServiceTestTools.swift */,
 				D084CF0A1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift */,
+				D0E01B2D1C8092FC00C57CA4 /* RemoteServiceTestToolsApi */,
+				D0E01B2E1C8093A000C57CA4 /* AmazonServiceTestToolsApi */,
+				D08D01ED1C6DEA1C001DC4EE /* Info.plist */,
 				D084CF061C7DB8F3004C9BF4 /* TestAssets.xcassets */,
-				D084CF081C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift */,
 			);
 			path = AmazonSwiftStarterTests;
 			sourceTree = "<group>";
@@ -175,6 +175,22 @@
 				D0A29F601C775F700039DF85 /* AMZConstants.swift */,
 			);
 			name = AmazonService;
+			sourceTree = "<group>";
+		};
+		D0E01B2D1C8092FC00C57CA4 /* RemoteServiceTestToolsApi */ = {
+			isa = PBXGroup;
+			children = (
+				D072CDA81C7CB8260084D2BA /* RemoteServiceTestTools.swift */,
+			);
+			name = RemoteServiceTestToolsApi;
+			sourceTree = "<group>";
+		};
+		D0E01B2E1C8093A000C57CA4 /* AmazonServiceTestToolsApi */ = {
+			isa = PBXGroup;
+			children = (
+				D084CF081C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift */,
+			);
+			name = AmazonServiceTestToolsApi;
 			sourceTree = "<group>";
 		};
 		D0EF50751C6E78E100D17FAD /* UI */ = {

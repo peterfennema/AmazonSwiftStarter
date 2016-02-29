@@ -63,11 +63,12 @@ class AMZRemoteService {
         
         AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = configuration
         
+        // The api I am using for uploading to and downloading from S3 (AWSS3TransferManager)can not deal with NSData directly, but uses files.
+        // I need to create tmp directories for these files.
         deviceDirectoryForUploads = createLocalTmpDirectory("upload")
         deviceDirectoryForDownloads = createLocalTmpDirectory("download")
     }
 
-    
     private func createLocalTmpDirectory(let directoryName: String) -> NSURL? {
         do {
             let url = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent(directoryName)
@@ -83,20 +84,25 @@ class AMZRemoteService {
         }
     }
     
-    
+    // This is where the saving to S3 (image) and DynamoDB (data) is done.
     func saveAMZUser(user: AMZUser, completion: ErrorResultBlock)  {
         precondition(user.userId != nil, "You should provide a user object with a userId when saving a user")
         
         let mapper = AWSDynamoDBObjectMapper.defaultDynamoDBObjectMapper()
+        // We create a task that will save the user to DynamoDB
+        // This works because AMZUser extends AWSDynamoDBObjectModel and conforms to AWSDynamoDBModeling
         let saveToDynamoDBTask: AWSTask = mapper.save(user)
         
+        // If there is no imageData we only have to save to DynamoDB
         if user.imageData == nil {
             saveToDynamoDBTask.continueWithBlock({ (task) -> AnyObject? in
                 completion(error: task.error)
                 return nil
             })
         } else {
+            // We have to save data to DynamoDB, and the image to S3
             saveToDynamoDBTask.continueWithSuccessBlock({ (task) -> AnyObject? in
+                // An example of the AWSTask api. We return a task and continueWithBlock is called on this task.
                 return self.createUploadImageTask(user)
             }).continueWithBlock({ (task) -> AnyObject? in
                 completion(error: task.error)
@@ -106,7 +112,6 @@ class AMZRemoteService {
             
     }
     
-
     private func createUploadImageTask(user: UserData) -> AWSTask {
         guard let userId = user.userId else {
             preconditionFailure("You should provide a user object with a userId when uploading a user image")
@@ -160,7 +165,11 @@ extension AMZRemoteService: RemoteService {
             preconditionFailure("No identity provider available, did you forget to call configure() before using AMZRemoteService?")
         }
         
-        // This covers the scenario that an app was deleted and later reinstalled. The goal is to create a new identity and a new user profile for this use case. By default, Cognito stores a Cognito identity in the keychain. This identity survives app uninstalls, so there can be an identity left from a previous app install. When we detect this scenario we remove all data from the keychain, so we can start from scratch.
+        // This covers the scenario that an app was deleted and later reinstalled. 
+        // The goal is to create a new identity and a new user profile for this use case. 
+        // By default, Cognito stores a Cognito identity in the keychain. 
+        // This identity survives app uninstalls, so there can be an identity left from a previous app install. 
+        // When we detect this scenario we remove all data from the keychain, so we can start from scratch.
         if identityProvider.identityId != nil {
             identityProvider.clearKeychain()
             assert(identityProvider.identityId == nil)
@@ -222,7 +231,7 @@ extension AMZRemoteService: RemoteService {
             if let error = error {
                 completion(error: error)
             } else {
-                // Here we can be certain that the user was saved on AWS, so we update the local user instance.
+                // Here we can be certain that the user was saved on AWS, so we update the local user property
                 currentUser.updateWithData(updatedUser)
                 completion(error: nil)
             }
