@@ -1,0 +1,1 @@
+../../../AWSMobileAnalytics/AWSMobileAnalytics/Internal/AWSMobileAnalyticsConnectivity.h

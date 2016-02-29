@@ -1,0 +1,1 @@
+../../../AWSKinesis/AWSKinesis/AWSKinesisResources.h

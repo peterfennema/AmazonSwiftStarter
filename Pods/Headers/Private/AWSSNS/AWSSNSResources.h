@@ -1,0 +1,1 @@
+../../../AWSSNS/AWSSNS/AWSSNSResources.h

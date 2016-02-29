@@ -1,0 +1,17 @@
+framework module AWSCognito {
+  umbrella header "AWSCognito-umbrella.h"
+
+  export *
+  module * { export * }
+
+  private header "FABAttributes.h"
+  private header "FABKitProtocol.h"
+  private header "Fabric+FABKits.h"
+  private header "Fabric.h"
+  private header "AWSCognitoConflict_Internal.h"
+  private header "AWSCognitoConstants.h"
+  private header "AWSCognitoDataset_Internal.h"
+  private header "AWSCognitoRecord_Internal.h"
+  private header "AWSCognitoSQLiteManager.h"
+  private header "AWSCognitoUtil.h"
+}

@@ -7,12 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65DA6465ACF4AA812B509535 /* Pods_AmazonSwiftStarter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AACD3733AEB12A038EA0F0 /* Pods_AmazonSwiftStarter.framework */; };
+		D03B30AB1C6E09E200094716 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */; };
 		D08D01D71C6DEA1C001DC4EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */; };
-		D08D01D91C6DEA1C001DC4EE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01D81C6DEA1C001DC4EE /* ViewController.swift */; };
+		D08D01D91C6DEA1C001DC4EE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */; };
 		D08D01DC1C6DEA1C001DC4EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DA1C6DEA1C001DC4EE /* Main.storyboard */; };
 		D08D01DE1C6DEA1C001DC4EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DD1C6DEA1C001DC4EE /* Assets.xcassets */; };
 		D08D01E11C6DEA1C001DC4EE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DF1C6DEA1C001DC4EE /* LaunchScreen.storyboard */; };
 		D08D01EC1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01EB1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift */; };
+		D0BE4E1C1C7318F5007C2CEC /* RemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1A1C7318F5007C2CEC /* RemoteService.swift */; };
+		D0BE4E1D1C7318F5007C2CEC /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1B1C7318F5007C2CEC /* UserData.swift */; };
+		D0BE4E1F1C731C69007C2CEC /* RemoteServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */; };
+		D0BE4E221C731D15007C2CEC /* AMZRemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E211C731D15007C2CEC /* AMZRemoteService.swift */; };
+		D0CA3B6B1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CA3B6A1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift */; };
+		D0CEAA351C847CA00041BFFA /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = D0CEAA341C847CA00041BFFA /* README.md */; };
+		D0E945311C71CC6100488ACD /* MessageOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E945301C71CC6100488ACD /* MessageOptions.swift */; };
+		D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,9 +36,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		12CD9C23995F0900B6064741 /* Pods-AmazonSwiftStarter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonSwiftStarter.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AmazonSwiftStarter/Pods-AmazonSwiftStarter.debug.xcconfig"; sourceTree = "<group>"; };
+		24DFE47F0E5188FE18C8487E /* Pods-AmazonSwiftStarter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonSwiftStarter.release.xcconfig"; path = "Pods/Target Support Files/Pods-AmazonSwiftStarter/Pods-AmazonSwiftStarter.release.xcconfig"; sourceTree = "<group>"; };
+		58AACD3733AEB12A038EA0F0 /* Pods_AmazonSwiftStarter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AmazonSwiftStarter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		D08D01D31C6DEA1C001DC4EE /* AmazonSwiftStarter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AmazonSwiftStarter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D08D01D81C6DEA1C001DC4EE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		D08D01DB1C6DEA1C001DC4EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D08D01DD1C6DEA1C001DC4EE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D08D01E01C6DEA1C001DC4EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -36,6 +50,14 @@
 		D08D01E71C6DEA1C001DC4EE /* AmazonSwiftStarterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmazonSwiftStarterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D08D01EB1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonSwiftStarterTests.swift; sourceTree = "<group>"; };
 		D08D01ED1C6DEA1C001DC4EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D0BE4E1A1C7318F5007C2CEC /* RemoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteService.swift; sourceTree = "<group>"; };
+		D0BE4E1B1C7318F5007C2CEC /* UserData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceFactory.swift; sourceTree = "<group>"; };
+		D0BE4E211C731D15007C2CEC /* AMZRemoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMZRemoteService.swift; sourceTree = "<group>"; };
+		D0CA3B6A1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonWithActivityIndicator.swift; sourceTree = "<group>"; };
+		D0CEAA341C847CA00041BFFA /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D0E945301C71CC6100488ACD /* MessageOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOptions.swift; sourceTree = "<group>"; };
+		D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComingSoonViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65DA6465ACF4AA812B509535 /* Pods_AmazonSwiftStarter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,12 +79,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		20F76B7727D0710940F818F3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				12CD9C23995F0900B6064741 /* Pods-AmazonSwiftStarter.debug.xcconfig */,
+				24DFE47F0E5188FE18C8487E /* Pods-AmazonSwiftStarter.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		57E18E709381CF0EA271BFD5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				58AACD3733AEB12A038EA0F0 /* Pods_AmazonSwiftStarter.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D08D01CA1C6DEA1C001DC4EE = {
 			isa = PBXGroup;
 			children = (
+				D0CEAA341C847CA00041BFFA /* README.md */,
 				D08D01D51C6DEA1C001DC4EE /* AmazonSwiftStarter */,
 				D08D01EA1C6DEA1C001DC4EE /* AmazonSwiftStarterTests */,
 				D08D01D41C6DEA1C001DC4EE /* Products */,
+				20F76B7727D0710940F818F3 /* Pods */,
+				57E18E709381CF0EA271BFD5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -77,8 +120,14 @@
 		D08D01D51C6DEA1C001DC4EE /* AmazonSwiftStarter */ = {
 			isa = PBXGroup;
 			children = (
+				D0BE4E191C7318C2007C2CEC /* RemoteServiceApi */,
+				D0BE4E201C731CDE007C2CEC /* AmazonService */,
+				D0EF50751C6E78E100D17FAD /* UI */,
 				D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */,
-				D08D01D81C6DEA1C001DC4EE /* ViewController.swift */,
+				D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */,
+				D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */,
+				D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */,
+				D0F556141C7213C10053C9EC /* ComingSoonViewController.swift */,
 				D08D01DA1C6DEA1C001DC4EE /* Main.storyboard */,
 				D08D01DD1C6DEA1C001DC4EE /* Assets.xcassets */,
 				D08D01DF1C6DEA1C001DC4EE /* LaunchScreen.storyboard */,
@@ -96,6 +145,32 @@
 			path = AmazonSwiftStarterTests;
 			sourceTree = "<group>";
 		};
+		D0BE4E191C7318C2007C2CEC /* RemoteServiceApi */ = {
+			isa = PBXGroup;
+			children = (
+				D0BE4E1A1C7318F5007C2CEC /* RemoteService.swift */,
+				D0BE4E1B1C7318F5007C2CEC /* UserData.swift */,
+			);
+			name = RemoteServiceApi;
+			sourceTree = "<group>";
+		};
+		D0BE4E201C731CDE007C2CEC /* AmazonService */ = {
+			isa = PBXGroup;
+			children = (
+				D0BE4E211C731D15007C2CEC /* AMZRemoteService.swift */,
+			);
+			name = AmazonService;
+			sourceTree = "<group>";
+		};
+		D0EF50751C6E78E100D17FAD /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				D0CA3B6A1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift */,
+				D0E945301C71CC6100488ACD /* MessageOptions.swift */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -103,9 +178,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D08D01F01C6DEA1C001DC4EE /* Build configuration list for PBXNativeTarget "AmazonSwiftStarter" */;
 			buildPhases = (
+				08D05A7F880B3CFC6DD18AE0 /* Check Pods Manifest.lock */,
 				D08D01CF1C6DEA1C001DC4EE /* Sources */,
 				D08D01D01C6DEA1C001DC4EE /* Frameworks */,
 				D08D01D11C6DEA1C001DC4EE /* Resources */,
+				AF6E1A4A06CC23169E0266C8 /* Embed Pods Frameworks */,
+				258A7954630BE42B477F0554 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -192,13 +270,70 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		08D05A7F880B3CFC6DD18AE0 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		258A7954630BE42B477F0554 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AmazonSwiftStarter/Pods-AmazonSwiftStarter-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AF6E1A4A06CC23169E0266C8 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AmazonSwiftStarter/Pods-AmazonSwiftStarter-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		D08D01CF1C6DEA1C001DC4EE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D08D01D91C6DEA1C001DC4EE /* ViewController.swift in Sources */,
+				D0CA3B6B1C711FB800EAC3C2 /* ButtonWithActivityIndicator.swift in Sources */,
+				D0BE4E221C731D15007C2CEC /* AMZRemoteService.swift in Sources */,
+				D08D01D91C6DEA1C001DC4EE /* WelcomeViewController.swift in Sources */,
+				D0BE4E1D1C7318F5007C2CEC /* UserData.swift in Sources */,
 				D08D01D71C6DEA1C001DC4EE /* AppDelegate.swift in Sources */,
+				D0E945311C71CC6100488ACD /* MessageOptions.swift in Sources */,
+				D0BE4E1C1C7318F5007C2CEC /* RemoteService.swift in Sources */,
+				D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */,
+				D03B30AB1C6E09E200094716 /* EditProfileViewController.swift in Sources */,
+				D0CEAA351C847CA00041BFFA /* README.md in Sources */,
+				D0BE4E1F1C731C69007C2CEC /* RemoteServiceFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,6 +458,7 @@
 		};
 		D08D01F11C6DEA1C001DC4EE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 12CD9C23995F0900B6064741 /* Pods-AmazonSwiftStarter.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = AmazonSwiftStarter/Info.plist;
@@ -334,6 +470,7 @@
 		};
 		D08D01F21C6DEA1C001DC4EE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24DFE47F0E5188FE18C8487E /* Pods-AmazonSwiftStarter.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = AmazonSwiftStarter/Info.plist;
@@ -386,6 +523,7 @@
 				D08D01F21C6DEA1C001DC4EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D08D01F31C6DEA1C001DC4EE /* Build configuration list for PBXNativeTarget "AmazonSwiftStarterTests" */ = {
 			isa = XCConfigurationList;
@@ -394,6 +532,7 @@
 				D08D01F51C6DEA1C001DC4EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

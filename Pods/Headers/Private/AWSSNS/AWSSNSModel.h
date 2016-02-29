@@ -1,0 +1,1 @@
+../../../AWSSNS/AWSSNS/AWSSNSModel.h

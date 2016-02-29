@@ -1,0 +1,1 @@
+../../../AWSSES/AWSSES/AWSSESResources.h
