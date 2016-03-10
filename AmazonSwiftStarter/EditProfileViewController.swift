@@ -18,6 +18,8 @@ class EditProfileViewController: UIViewController {
     
     weak var delegate: EditProfileViewControllerDelegate?
     
+    private var imageModified: Bool = false
+    
     @IBOutlet weak var nameTextField: UITextField!
     
     @IBOutlet weak var imageView: UIImageView!
@@ -26,12 +28,16 @@ class EditProfileViewController: UIViewController {
     
     @IBAction func didTapDone(sender: UIButton) {
         doneButton.startAnimating()
-        let userData = UserDataValue()
+        var userData = UserDataValue()
+        userData.updateWithData(RemoteServiceFactory.getDefaultService().currentUser!)
         userData.name = nameTextField.text
-        if let image = imageView.image {
-            userData.imageData = UIImageJPEGRepresentation(image, 1.0)
-        } else {
-            userData.imageData = nil
+        if imageModified {
+            if let image = imageView.image {
+                userData.imageData = UIImageJPEGRepresentation(image, 0.4)
+            } else {
+                userData.imageData = nil
+            }
+            imageModified = false
         }
         RemoteServiceFactory.getDefaultService().updateCurrentUser(userData) { (error) -> Void in
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -45,6 +51,10 @@ class EditProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard let currentUser = RemoteServiceFactory.getDefaultService().currentUser else {
+            preconditionFailure("CurrentUser must be available")
+        }
+        updateUI(currentUser)
         imageView.userInteractionEnabled = true
         let tapRec = UITapGestureRecognizer(target: self, action: "didTapImageView:")
         imageView.addGestureRecognizer(tapRec)
@@ -57,6 +67,15 @@ class EditProfileViewController: UIViewController {
         picker.delegate = self
         presentViewController(picker, animated: true, completion: nil)
     }
+    
+    func updateUI(userData: UserData) {
+        nameTextField.text = userData.name
+        if userData.imageData == nil {
+            imageView.image = UIImage(named: "unknownUser")
+        } else {
+            imageView.image = UIImage(data: userData.imageData!)
+        }
+    }
 
 }
 
@@ -66,6 +85,7 @@ extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigati
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         if let capturedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
             self.imageView.image = capturedImage
+            imageModified = true
             picker.dismissViewControllerAnimated(true, completion: nil)
         }
     }

@@ -3,9 +3,13 @@ A demo app for iOS developers who are considering to use Amazon Web Services (AW
 
 I am looking for a replacement of Parse. My most important goal is to research the features I need for my commercial app, and prototype them in this demo app.
 
-Read all about it at http://peterfennema.nl/exploring-aws-as-a-backend-for-a-swift-app-1/
+## Version 3.0 (for blog post 3)
+http://peterfennema.nl/exploring-aws-as-a-backend-for-a-swift-app-3/
+
+This version of the app accesses AWS. It uses the following services: Cognito, DynamoDB, S3, IAM
 
 ## Version 1.0 (for blog post 1)
+http://peterfennema.nl/exploring-aws-as-a-backend-for-a-swift-app-1/
 
 The app will let a user sign up anonymously, and let him/her create a profile. The profile consists of his/her name and a photo. 
 

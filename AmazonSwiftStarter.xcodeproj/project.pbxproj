@@ -9,12 +9,18 @@
 /* Begin PBXBuildFile section */
 		65DA6465ACF4AA812B509535 /* Pods_AmazonSwiftStarter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AACD3733AEB12A038EA0F0 /* Pods_AmazonSwiftStarter.framework */; };
 		D03B30AB1C6E09E200094716 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */; };
+		D072CDA71C7CB05E0084D2BA /* RemoteServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D072CDA61C7CB05E0084D2BA /* RemoteServiceTest.swift */; };
+		D072CDA91C7CB8260084D2BA /* RemoteServiceTestTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = D072CDA81C7CB8260084D2BA /* RemoteServiceTestTools.swift */; };
+		D084CF071C7DB8F3004C9BF4 /* TestAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D084CF061C7DB8F3004C9BF4 /* TestAssets.xcassets */; };
+		D084CF091C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = D084CF081C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift */; };
+		D084CF0B1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D084CF0A1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift */; };
 		D08D01D71C6DEA1C001DC4EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */; };
 		D08D01D91C6DEA1C001DC4EE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */; };
 		D08D01DC1C6DEA1C001DC4EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DA1C6DEA1C001DC4EE /* Main.storyboard */; };
 		D08D01DE1C6DEA1C001DC4EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DD1C6DEA1C001DC4EE /* Assets.xcassets */; };
 		D08D01E11C6DEA1C001DC4EE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DF1C6DEA1C001DC4EE /* LaunchScreen.storyboard */; };
-		D08D01EC1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01EB1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift */; };
+		D0A29F611C775F700039DF85 /* AMZConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A29F601C775F700039DF85 /* AMZConstants.swift */; };
+		D0A29F631C7760EC0039DF85 /* AMZUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A29F621C7760EC0039DF85 /* AMZUser.swift */; };
 		D0BE4E1C1C7318F5007C2CEC /* RemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1A1C7318F5007C2CEC /* RemoteService.swift */; };
 		D0BE4E1D1C7318F5007C2CEC /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1B1C7318F5007C2CEC /* UserData.swift */; };
 		D0BE4E1F1C731C69007C2CEC /* RemoteServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */; };
@@ -39,6 +45,11 @@
 		24DFE47F0E5188FE18C8487E /* Pods-AmazonSwiftStarter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonSwiftStarter.release.xcconfig"; path = "Pods/Target Support Files/Pods-AmazonSwiftStarter/Pods-AmazonSwiftStarter.release.xcconfig"; sourceTree = "<group>"; };
 		58AACD3733AEB12A038EA0F0 /* Pods_AmazonSwiftStarter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AmazonSwiftStarter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
+		D072CDA61C7CB05E0084D2BA /* RemoteServiceTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceTest.swift; sourceTree = "<group>"; };
+		D072CDA81C7CB8260084D2BA /* RemoteServiceTestTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceTestTools.swift; sourceTree = "<group>"; };
+		D084CF061C7DB8F3004C9BF4 /* TestAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TestAssets.xcassets; sourceTree = "<group>"; };
+		D084CF081C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMZRemoteServiceWithTestTools.swift; sourceTree = "<group>"; };
+		D084CF0A1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceWithTestToolsFactory.swift; sourceTree = "<group>"; };
 		D08D01D31C6DEA1C001DC4EE /* AmazonSwiftStarter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AmazonSwiftStarter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
@@ -47,8 +58,9 @@
 		D08D01E01C6DEA1C001DC4EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D08D01E21C6DEA1C001DC4EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D08D01E71C6DEA1C001DC4EE /* AmazonSwiftStarterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmazonSwiftStarterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D08D01EB1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonSwiftStarterTests.swift; sourceTree = "<group>"; };
 		D08D01ED1C6DEA1C001DC4EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D0A29F601C775F700039DF85 /* AMZConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMZConstants.swift; sourceTree = "<group>"; };
+		D0A29F621C7760EC0039DF85 /* AMZUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMZUser.swift; sourceTree = "<group>"; };
 		D0BE4E1A1C7318F5007C2CEC /* RemoteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteService.swift; sourceTree = "<group>"; };
 		D0BE4E1B1C7318F5007C2CEC /* UserData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		D0BE4E1E1C731C69007C2CEC /* RemoteServiceFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceFactory.swift; sourceTree = "<group>"; };
@@ -138,8 +150,12 @@
 		D08D01EA1C6DEA1C001DC4EE /* AmazonSwiftStarterTests */ = {
 			isa = PBXGroup;
 			children = (
-				D08D01EB1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift */,
+				D072CDA61C7CB05E0084D2BA /* RemoteServiceTest.swift */,
+				D084CF0A1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift */,
+				D0E01B2D1C8092FC00C57CA4 /* RemoteServiceTestToolsApi */,
+				D0E01B2E1C8093A000C57CA4 /* AmazonServiceTestToolsApi */,
 				D08D01ED1C6DEA1C001DC4EE /* Info.plist */,
+				D084CF061C7DB8F3004C9BF4 /* TestAssets.xcassets */,
 			);
 			path = AmazonSwiftStarterTests;
 			sourceTree = "<group>";
@@ -157,8 +173,26 @@
 			isa = PBXGroup;
 			children = (
 				D0BE4E211C731D15007C2CEC /* AMZRemoteService.swift */,
+				D0A29F621C7760EC0039DF85 /* AMZUser.swift */,
+				D0A29F601C775F700039DF85 /* AMZConstants.swift */,
 			);
 			name = AmazonService;
+			sourceTree = "<group>";
+		};
+		D0E01B2D1C8092FC00C57CA4 /* RemoteServiceTestToolsApi */ = {
+			isa = PBXGroup;
+			children = (
+				D072CDA81C7CB8260084D2BA /* RemoteServiceTestTools.swift */,
+			);
+			name = RemoteServiceTestToolsApi;
+			sourceTree = "<group>";
+		};
+		D0E01B2E1C8093A000C57CA4 /* AmazonServiceTestToolsApi */ = {
+			isa = PBXGroup;
+			children = (
+				D084CF081C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift */,
+			);
+			name = AmazonServiceTestToolsApi;
 			sourceTree = "<group>";
 		};
 		D0EF50751C6E78E100D17FAD /* UI */ = {
@@ -264,6 +298,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D084CF071C7DB8F3004C9BF4 /* TestAssets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +364,8 @@
 				D08D01D71C6DEA1C001DC4EE /* AppDelegate.swift in Sources */,
 				D0E945311C71CC6100488ACD /* MessageOptions.swift in Sources */,
 				D0BE4E1C1C7318F5007C2CEC /* RemoteService.swift in Sources */,
+				D0A29F631C7760EC0039DF85 /* AMZUser.swift in Sources */,
+				D0A29F611C775F700039DF85 /* AMZConstants.swift in Sources */,
 				D0F556151C7213C10053C9EC /* ComingSoonViewController.swift in Sources */,
 				D03B30AB1C6E09E200094716 /* EditProfileViewController.swift in Sources */,
 				D0BE4E1F1C731C69007C2CEC /* RemoteServiceFactory.swift in Sources */,
@@ -339,7 +376,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D08D01EC1C6DEA1C001DC4EE /* AmazonSwiftStarterTests.swift in Sources */,
+				D084CF0B1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift in Sources */,
+				D072CDA71C7CB05E0084D2BA /* RemoteServiceTest.swift in Sources */,
+				D072CDA91C7CB8260084D2BA /* RemoteServiceTestTools.swift in Sources */,
+				D084CF091C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
