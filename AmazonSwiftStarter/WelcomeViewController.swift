@@ -11,31 +11,31 @@ import GSMessages
 
 protocol WelcomeViewControllerDelegate: class {
     
-    func welcomeViewControllerDidFinish(controller: WelcomeViewController)
+    func welcomeViewControllerDidFinish(_ controller: WelcomeViewController)
     
 }
 
 class WelcomeViewController: UIViewController {
     
     enum State {
-        case Welcome
-        case Welcomed
+        case welcome
+        case welcomed
     }
 
 
     weak var delegate: WelcomeViewControllerDelegate?
     
-    private var state: State = .Welcome {
+    fileprivate var state: State = .welcome {
         didSet {
             switch state {
-            case .Welcome:
-                showMessage("\"Anonymous Sign In\" will call AWS Cognito. The app will receive an identity token from the Cognito Service and will store it on the device.", type: GSMessageType.Info, options: MessageOptions.Info)
-                signInButton.hidden = false
-                createProfileButton.hidden = true
-            case .Welcomed:
-                showMessage("You are now signed in. An empty user profile with a unique userId has already been created behind the scenes in DynamoDB.", type: GSMessageType.Info, options: MessageOptions.Info)
-                signInButton.hidden = true
-                createProfileButton.hidden = false
+            case .welcome:
+                showMessage("\"Anonymous Sign In\" will call AWS Cognito. The app will receive an identity token from the Cognito Service and will store it on the device.", type: GSMessageType.info, options: MessageOptions.Info)
+                signInButton.isHidden = false
+                createProfileButton.isHidden = true
+            case .welcomed:
+                showMessage("You are now signed in. An empty user profile with a unique userId has already been created behind the scenes in DynamoDB.", type: GSMessageType.info, options: MessageOptions.Info)
+                signInButton.isHidden = true
+                createProfileButton.isHidden = false
             }
         }
     }
@@ -45,26 +45,26 @@ class WelcomeViewController: UIViewController {
     @IBOutlet weak var createProfileButton: UIButton!
     
     
-    @IBAction func didTapSignInButton(sender: UIButton) {
+    @IBAction func didTapSignInButton(_ sender: UIButton) {
         hideMessage()
         signInButton.startAnimating()
         RemoteServiceFactory.getDefaultService().createCurrentUser(nil) { (error) -> Void in
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.state = .Welcomed
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.state = .welcomed
                 self.signInButton.stopAnimating()
             })
         }
     }
         
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        state = .Welcome
+        state = .welcome
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "editProfileSegue" {
             hideMessage()
-            let destVC = segue.destinationViewController as! EditProfileViewController
+            let destVC = segue.destination as! EditProfileViewController
             destVC.delegate = self
         }
     }
@@ -75,9 +75,9 @@ class WelcomeViewController: UIViewController {
 
 extension WelcomeViewController: EditProfileViewControllerDelegate {
     
-    func editProfileViewControllerDidFinishEditing(controller: EditProfileViewController) {
-        self.view.hidden = true
-        controller.dismissViewControllerAnimated(true) { () -> Void in
+    func editProfileViewControllerDidFinishEditing(_ controller: EditProfileViewController) {
+        self.view.isHidden = true
+        controller.dismiss(animated: true) { () -> Void in
             if let delegate = self.delegate {
                 delegate.welcomeViewControllerDidFinish(self)
             }

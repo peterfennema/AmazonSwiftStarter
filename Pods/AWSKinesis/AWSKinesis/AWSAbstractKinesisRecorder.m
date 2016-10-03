@@ -36,7 +36,8 @@ NSString *const AWSKinesisAbstractClientRecorderDatabasePathPrefix = @"com/amazo
                             records:(NSArray *)temporaryRecords
                       partitionKeys:(NSArray *)partitionKeys
                    putPartitionKeys:(NSMutableArray *)putPartitionKeys
-                 retryPartitionKeys:(NSMutableArray *)retryPartitionKeys;
+                 retryPartitionKeys:(NSMutableArray *)retryPartitionKeys
+                               stop:(BOOL *)stop;
 
 - (NSError *)dataTooLargeError;
 
@@ -139,7 +140,7 @@ NSString *const AWSKinesisAbstractClientRecorderDatabasePathPrefix = @"com/amazo
     NSUInteger diskByteLimit = self.diskByteLimit;
     __weak id notificationSender = self;
 
-    return [[AWSTask taskWithResult:nil] continueWithSuccessBlock:^id(AWSTask *task) {
+    return [[AWSTask taskWithResult:nil] continueWithExecutor:[AWSExecutor executorWithDispatchQueue:[AWSKinesisRecorder sharedQueue]] withSuccessBlock:^id _Nullable(AWSTask * _Nonnull task) {
         // Inserts a new record to the database.
         __block NSError *error = nil;
         [databaseQueue inDatabase:^(AWSFMDatabase *db) {
@@ -227,6 +228,7 @@ NSString *const AWSKinesisAbstractClientRecorderDatabasePathPrefix = @"com/amazo
     return [[AWSTask taskWithResult:nil] continueWithExecutor:[AWSExecutor executorWithDispatchQueue:[AWSKinesisRecorder sharedQueue]] withSuccessBlock:^id _Nullable(AWSTask * _Nonnull task) {
         __block NSError *error = nil;
         __block NSUInteger batchSize = 0;
+        __block BOOL stop = NO;
 
         do {
             [databaseQueue inTransaction:^(AWSFMDatabase *db, BOOL *rollback) {
@@ -275,7 +277,8 @@ NSString *const AWSKinesisAbstractClientRecorderDatabasePathPrefix = @"com/amazo
                                                          records:temporaryRecords
                                                    partitionKeys:partitionKeys
                                                 putPartitionKeys:putPartitionKeys
-                                              retryPartitionKeys:retryPartitionKeys] waitUntilFinished];
+                                              retryPartitionKeys:retryPartitionKeys
+                                                            stop:&stop] waitUntilFinished];
 
                     for (NSString *partitionKey in putPartitionKeys) {
                         BOOL result = [db executeUpdate:@"DELETE FROM record WHERE partition_key = :partition_key"
@@ -307,7 +310,7 @@ NSString *const AWSKinesisAbstractClientRecorderDatabasePathPrefix = @"com/amazo
                     error = db.lastError;
                 }
             }];
-        } while (!error && batchSize > 0);
+        } while (!stop && !error && batchSize > 0);
 
         if (error) {
             return [AWSTask taskWithError:error];
@@ -320,7 +323,7 @@ NSString *const AWSKinesisAbstractClientRecorderDatabasePathPrefix = @"com/amazo
 - (AWSTask *)removeAllRecords {
     AWSFMDatabaseQueue *databaseQueue = self.databaseQueue;
 
-    return [[AWSTask taskWithResult:nil] continueWithSuccessBlock:^id(AWSTask *task) {
+    return [[AWSTask taskWithResult:nil] continueWithExecutor:[AWSExecutor executorWithDispatchQueue:[AWSKinesisRecorder sharedQueue]] withSuccessBlock:^id _Nullable(AWSTask * _Nonnull task) {
         __block NSError *error = nil;
         [databaseQueue inDatabase:^(AWSFMDatabase *db) {
             if (![db executeUpdate:@"DELETE FROM record"]) {

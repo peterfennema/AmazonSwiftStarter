@@ -1,1 +1,1 @@
-../../../AWSCognito/Cognito/AWSCognito.h
+../../../AWSCognito/AWSCognito/AWSCognito.h

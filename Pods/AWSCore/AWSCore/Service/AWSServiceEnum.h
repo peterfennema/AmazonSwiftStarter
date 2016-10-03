@@ -64,6 +64,10 @@ typedef NS_ENUM(NSInteger, AWSRegionType) {
      */
     AWSRegionAPSoutheast2,
     /**
+     *  Asia Pacific (Mumbai)
+     */
+    AWSRegionAPSouth1,
+    /**
      *  South America (Sao Paulo)
      */
     AWSRegionSAEast1,
@@ -104,6 +108,10 @@ typedef NS_ENUM(NSInteger, AWSServiceType) {
      *  Amazon Cognito Identity
      */
     AWSServiceCognitoIdentity,
+    /**
+     *  Amazon Cognito Identity Provider
+     */
+    AWSServiceCognitoIdentityProvider,
     /**
      *  Amazon Cognito Sync
      */

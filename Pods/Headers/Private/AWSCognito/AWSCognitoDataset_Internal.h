@@ -1,1 +1,1 @@
-../../../AWSCognito/Cognito/Internal/AWSCognitoDataset_Internal.h
+../../../AWSCognito/AWSCognito/Internal/AWSCognitoDataset_Internal.h

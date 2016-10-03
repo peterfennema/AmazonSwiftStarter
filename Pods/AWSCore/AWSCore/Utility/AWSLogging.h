@@ -15,7 +15,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 #define AWSLogFormat @"%@ line:%d | %s | "
 
 #define AWSLogError(fmt, ...)    [[AWSLogger defaultLogger] log:AWSLogLevelError format:(AWSLogFormat fmt), [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__]
@@ -23,7 +22,6 @@
 #define AWSLogInfo(fmt, ...)    [[AWSLogger defaultLogger] log:AWSLogLevelInfo format:(AWSLogFormat fmt), [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__]
 #define AWSLogDebug(fmt, ...)    [[AWSLogger defaultLogger] log:AWSLogLevelDebug format:(AWSLogFormat fmt), [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__]
 #define AWSLogVerbose(fmt, ...)    [[AWSLogger defaultLogger] log:AWSLogLevelVerbose format:(AWSLogFormat fmt), [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__]
-
 
 typedef NS_ENUM(NSInteger, AWSLogLevel) {
     AWSLogLevelUnknown = -1,
@@ -36,39 +34,40 @@ typedef NS_ENUM(NSInteger, AWSLogLevel) {
 };
 
 /**
- AWSLogger is an utility class that handles logging to the console. Changing log levels during development may make debugging easier. You can change the log level by importing `AWSCore.h` and calling:
+ `AWSLogger` is an utility class that handles logging to the console. Changing log levels during development may make debugging easier. You can change the log level by importing `AWSCore.h` and calling:
 
  *Swift*
 
-     AWSLogger.defaultLogger().logLevel = .Verbose
+     AWSLogger.defaultLogger().logLevel = .None
 
  The following logging level options are available:
 
      .None
-     .Error (This is the default. Only error logs are printed to the console.)
+     .Error
      .Warn
      .Info
-     .Debug
+     .Debug (This is the default.)
      .Verbose
 
  *Objective-C*
 
-     [AWSLogger defaultLogger].logLevel = AWSLogLevelVerbose;
+     [AWSLogger defaultLogger].logLevel = AWSLogLevelNone;
 
  The following logging level options are available:
 
      AWSLogLevelNone
-     AWSLogLevelError (This is the default. Only error logs are printed to the console.)
+     AWSLogLevelError
      AWSLogLevelWarn
      AWSLogLevelInfo
-     AWSLogLevelDebug
+     AWSLogLevelDebug (This is the default.)
      AWSLogLevelVerbose
 
+ @note We recommend setting the log level to `None` before publishing to the Apple App Store.
  */
 @interface AWSLogger : NSObject
 
 /**
- The log level setting. The default is AWSLogLevelError.
+ The log level setting. The default value is `Debug`.
  */
 @property (atomic, assign) AWSLogLevel logLevel;
 

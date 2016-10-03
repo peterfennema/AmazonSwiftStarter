@@ -93,17 +93,7 @@ NSString *const AWSNetworkingErrorDomain = @"com.amazonaws.AWSNetworkingErrorDom
 }
 
 - (AWSTask *)sendRequest:(AWSNetworkingRequest *)request {
-    AWSTaskCompletionSource *taskCompletionSource = [AWSTaskCompletionSource taskCompletionSource];
-    [self.networkManager dataTaskWithRequest:request
-                           completionHandler:^(id responseObject, NSError *error) {
-                               if (!error) {
-                                   taskCompletionSource.result = responseObject;
-                               } else {
-                                   taskCompletionSource.error = error;
-                               }
-                           }];
-
-    return taskCompletionSource.task;
+    return [self.networkManager dataTaskWithRequest:request];
 }
 @end
 
@@ -114,6 +104,7 @@ NSString *const AWSNetworkingErrorDomain = @"com.amazonaws.AWSNetworkingErrorDom
 - (instancetype)init {
     if (self = [super init]) {
         _maxRetryCount = 3;
+        _allowsCellularAccess = YES;
     }
     return self;
 }
@@ -147,7 +138,6 @@ NSString *const AWSNetworkingErrorDomain = @"com.amazonaws.AWSNetworkingErrorDom
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    
     AWSNetworkingConfiguration *configuration = nil;
     if ([self isMemberOfClass:[AWSServiceConfiguration class]]) {
         configuration = [[AWSServiceConfiguration allocWithZone:zone] initWithRegion:AWSRegionUnknown credentialsProvider:nil];
@@ -159,6 +149,9 @@ NSString *const AWSNetworkingErrorDomain = @"com.amazonaws.AWSNetworkingErrorDom
     configuration.URLString = [self.URLString copy];
     configuration.HTTPMethod = self.HTTPMethod;
     configuration.headers = [self.headers copy];
+    configuration.allowsCellularAccess = self.allowsCellularAccess;
+    configuration.sharedContainerIdentifier = self.sharedContainerIdentifier;
+    
     configuration.requestSerializer = self.requestSerializer;
     configuration.requestInterceptors = [self.requestInterceptors copy];
     configuration.responseSerializer = self.responseSerializer;

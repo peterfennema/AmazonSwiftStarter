@@ -1,1 +1,1 @@
-../../../AWSCognito/Cognito/AWSCognitoHandlers.h
+../../../AWSCognito/AWSCognito/AWSCognitoHandlers.h

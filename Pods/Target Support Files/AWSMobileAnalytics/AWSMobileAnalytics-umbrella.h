@@ -9,7 +9,6 @@
 #import "AWSMobileAnalyticsOptions.h"
 #import "AWSMobileAnalyticsService.h"
 #import "AWSMobileAnalyticsVirtualMonetizationEventBuilder.h"
-#import "AWSMobileAnalyticsERS.h"
 #import "AWSMobileAnalyticsERSModel.h"
 #import "AWSMobileAnalyticsERSResources.h"
 #import "AWSMobileAnalyticsERSService.h"

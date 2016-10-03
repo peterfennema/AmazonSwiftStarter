@@ -13,18 +13,22 @@
 // permissions and limitations under the License.
 //
 
-#import "AWSDynamoDB.h"
-
-#import "AWSNetworking.h"
-#import "AWSSignature.h"
-#import "AWSService.h"
-#import "AWSCategory.h"
-#import "AWSNetworking.h"
-#import "AWSURLRequestSerialization.h"
-#import "AWSURLResponseSerialization.h"
-#import "AWSURLRequestRetryHandler.h"
-#import "AWSSynchronizedMutableDictionary.h"
+#import "AWSDynamoDBService.h"
+#import <AWSCore/AWSNetworking.h>
+#import <AWSCore/AWSCategory.h>
+#import <AWSCore/AWSNetworking.h>
+#import <AWSCore/AWSSignature.h>
+#import <AWSCore/AWSService.h>
+#import <AWSCore/AWSURLRequestSerialization.h>
+#import <AWSCore/AWSURLResponseSerialization.h>
+#import <AWSCore/AWSURLRequestRetryHandler.h>
+#import <AWSCore/AWSSynchronizedMutableDictionary.h>
 #import "AWSDynamoDBResources.h"
+#import "AWSDynamoDBRequestRetryHandler.h"
+
+static NSString *const AWSInfoDynamoDB = @"DynamoDB";
+static NSString *const AWSDynamoDBSDKVersion = @"2.4.9";
+
 
 @interface AWSDynamoDBResponseSerializer : AWSJSONResponseSerializer
 
@@ -37,11 +41,6 @@
 static NSDictionary *errorCodeDictionary = nil;
 + (void)initialize {
     errorCodeDictionary = @{
-                            @"AccessDeniedException" : @(AWSDynamoDBErrorAccessDenied),
-                            @"UnrecognizedClientException" : @(AWSDynamoDBErrorUnrecognizedClient),
-                            @"IncompleteSignature" : @(AWSDynamoDBErrorIncompleteSignature),
-                            @"InvalidClientTokenId" : @(AWSDynamoDBErrorInvalidClientTokenId),
-                            @"MissingAuthenticationToken" : @(AWSDynamoDBErrorMissingAuthenticationToken),
                             @"ConditionalCheckFailedException" : @(AWSDynamoDBErrorConditionalCheckFailed),
                             @"InternalServerError" : @(AWSDynamoDBErrorInternalServer),
                             @"ItemCollectionSizeLimitExceededException" : @(AWSDynamoDBErrorItemCollectionSizeLimitExceeded),
@@ -65,73 +64,43 @@ static NSDictionary *errorCodeDictionary = nil;
                                                     data:data
                                                    error:error];
     if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
-        if ([errorCodeDictionary objectForKey:[[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]]) {
-            if (error) {
-                *error = [NSError errorWithDomain:AWSDynamoDBErrorDomain
-                                             code:[[errorCodeDictionary objectForKey:[[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]] integerValue]
-                                         userInfo:responseObject];
-            }
-            return responseObject;
-        } else if ([[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]) {
-            if (error) {
-                *error = [NSError errorWithDomain:AWSDynamoDBErrorDomain
-                                             code:AWSDynamoDBErrorUnknown
-                                         userInfo:responseObject];
-            }
-            return responseObject;
-        }
+    	if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
+	        if ([errorCodeDictionary objectForKey:[[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]]) {
+	            if (error) {
+	                *error = [NSError errorWithDomain:AWSDynamoDBErrorDomain
+	                                             code:[[errorCodeDictionary objectForKey:[[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]] integerValue]
+	                                         userInfo:responseObject];
+	            }
+	            return responseObject;
+	        } else if ([[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]) {
+	            if (error) {
+	                *error = [NSError errorWithDomain:AWSCognitoIdentityErrorDomain
+	                                             code:AWSCognitoIdentityErrorUnknown
+	                                         userInfo:responseObject];
+	            }
+	            return responseObject;
+	        }
+    	}
+    }
 
+    if (!*error && response.statusCode/100 != 2) {
+        *error = [NSError errorWithDomain:AWSDynamoDBErrorDomain
+                                     code:AWSDynamoDBErrorUnknown
+                                 userInfo:nil];
+    }
+
+    if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
         if (self.outputClass) {
             responseObject = [AWSMTLJSONAdapter modelOfClass:self.outputClass
                                           fromJSONDictionary:responseObject
                                                        error:error];
         }
     }
-
-    return responseObject;
+	    return responseObject;
 }
 
 @end
 
-@interface AWSDynamoDBRequestRetryHandler : AWSURLRequestRetryHandler
-
-@end
-
-@implementation AWSDynamoDBRequestRetryHandler
-
-- (AWSNetworkingRetryType)shouldRetry:(uint32_t)currentRetryCount
-                             response:(NSHTTPURLResponse *)response
-                                 data:(NSData *)data
-                                error:(NSError *)error {
-    AWSNetworkingRetryType retryType = [super shouldRetry:currentRetryCount
-                                                 response:response
-                                                     data:data
-                                                    error:error];
-    if(retryType == AWSNetworkingRetryTypeShouldNotRetry
-       && [error.domain isEqualToString:AWSDynamoDBErrorDomain]
-       && currentRetryCount < self.maxRetryCount) {
-        switch (error.code) {
-            case AWSDynamoDBErrorProvisionedThroughputExceeded:
-                retryType = AWSNetworkingRetryTypeShouldRetry;
-                break;
-
-            case AWSDynamoDBErrorAccessDenied:
-            case AWSDynamoDBErrorUnrecognizedClient:
-            case AWSDynamoDBErrorIncompleteSignature:
-            case AWSDynamoDBErrorInvalidClientTokenId:
-            case AWSDynamoDBErrorMissingAuthenticationToken:
-                retryType = AWSNetworkingRetryTypeShouldRefreshCredentialsAndRetry;
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    return retryType;
-}
-
-@end
 
 @interface AWSRequest()
 
@@ -152,24 +121,49 @@ static NSDictionary *errorCodeDictionary = nil;
 
 @end
 
+@interface AWSEndpoint()
+
+- (void) setRegion:(AWSRegionType)regionType service:(AWSServiceType)serviceType;
+
+@end
+
 @implementation AWSDynamoDB
+
++ (void)initialize {
+    [super initialize];
+
+    if (![AWSiOSSDKVersion isEqualToString:AWSDynamoDBSDKVersion]) {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                       reason:[NSString stringWithFormat:@"AWSCore and AWSDynamoDB versions need to match. Check your SDK installation. AWSCore: %@ AWSDynamoDB: %@", AWSiOSSDKVersion, AWSDynamoDBSDKVersion]
+                                     userInfo:nil];
+    }
+}
+
+#pragma mark - Setup
 
 static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 
 + (instancetype)defaultDynamoDB {
-    if (![AWSServiceManager defaultServiceManager].defaultServiceConfiguration) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"`defaultServiceConfiguration` is `nil`. You need to set it before using this method."
-                                     userInfo:nil];
-    }
-
     static AWSDynamoDB *_defaultDynamoDB = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        _defaultDynamoDB = [[AWSDynamoDB alloc] initWithConfiguration:AWSServiceManager.defaultServiceManager.defaultServiceConfiguration];
-#pragma clang diagnostic pop
+        AWSServiceConfiguration *serviceConfiguration = nil;
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] defaultServiceInfo:AWSInfoDynamoDB];
+        if (serviceInfo) {
+            serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                               credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+        }
+
+        if (!serviceConfiguration) {
+            serviceConfiguration = [AWSServiceManager defaultServiceManager].defaultServiceConfiguration;
+        }
+
+        if (!serviceConfiguration) {
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                           reason:@"The service configuration is `nil`. You need to configure `Info.plist` or set `defaultServiceConfiguration` before using this method."
+                                         userInfo:nil];
+        }
+        _defaultDynamoDB = [[AWSDynamoDB alloc] initWithConfiguration:serviceConfiguration];
     });
 
     return _defaultDynamoDB;
@@ -180,15 +174,28 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     dispatch_once(&onceToken, ^{
         _serviceClients = [AWSSynchronizedMutableDictionary new];
     });
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [_serviceClients setObject:[[AWSDynamoDB alloc] initWithConfiguration:configuration]
                         forKey:key];
-#pragma clang diagnostic pop
 }
 
 + (instancetype)DynamoDBForKey:(NSString *)key {
-    return [_serviceClients objectForKey:key];
+    @synchronized(self) {
+        AWSDynamoDB *serviceClient = [_serviceClients objectForKey:key];
+        if (serviceClient) {
+            return serviceClient;
+        }
+
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] serviceInfo:AWSInfoDynamoDB
+                                                                     forKey:key];
+        if (serviceInfo) {
+            AWSServiceConfiguration *serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                                                        credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+            [AWSDynamoDB registerDynamoDBWithConfiguration:serviceConfiguration
+                                                                forKey:key];
+        }
+
+        return [_serviceClients objectForKey:key];
+    }
 }
 
 + (void)removeDynamoDBForKey:(NSString *)key {
@@ -202,27 +209,33 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     return nil;
 }
 
+#pragma mark -
+
 - (instancetype)initWithConfiguration:(AWSServiceConfiguration *)configuration {
     if (self = [super init]) {
         _configuration = [configuration copy];
-
-        _configuration.endpoint = [[AWSEndpoint alloc] initWithRegion:_configuration.regionType
+       	
+        if(!configuration.endpoint){
+            _configuration.endpoint = [[AWSEndpoint alloc] initWithRegion:_configuration.regionType
                                                               service:AWSServiceDynamoDB
                                                          useUnsafeURL:NO];
-
+        }else{
+            [_configuration.endpoint setRegion:_configuration.regionType
+                                      service:AWSServiceDynamoDB];
+        }
+       	
         AWSSignatureV4Signer *signer = [[AWSSignatureV4Signer alloc] initWithCredentialsProvider:_configuration.credentialsProvider
                                                                                         endpoint:_configuration.endpoint];
         AWSNetworkingRequestInterceptor *baseInterceptor = [[AWSNetworkingRequestInterceptor alloc] initWithUserAgent:_configuration.userAgent];
         _configuration.requestInterceptors = @[baseInterceptor, signer];
 
         _configuration.baseURL = _configuration.endpoint.URL;
-        _configuration.requestSerializer = [AWSJSONRequestSerializer new];
         _configuration.retryHandler = [[AWSDynamoDBRequestRetryHandler alloc] initWithMaximumRetryCount:_configuration.maxRetryCount];
-        _configuration.headers = @{@"Content-Type" : @"application/x-amz-json-1.0"};
-
+        _configuration.headers = @{@"Content-Type" : @"application/x-amz-json-1.0"}; 
+		
         _networking = [[AWSNetworking alloc] initWithConfiguration:_configuration];
     }
-
+    
     return self;
 }
 
@@ -237,22 +250,24 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
         if (!request) {
             request = [AWSRequest new];
         }
-        
+
         AWSNetworkingRequest *networkingRequest = request.internalRequest;
         if (request) {
             networkingRequest.parameters = [[AWSMTLJSONAdapter JSONDictionaryFromModel:request] aws_removeNullValues];
         } else {
             networkingRequest.parameters = @{};
         }
-        NSMutableDictionary *headers = [NSMutableDictionary new];
+
+		NSMutableDictionary *headers = [NSMutableDictionary new];
         headers[@"X-Amz-Target"] = [NSString stringWithFormat:@"%@.%@", targetPrefix, operationName];
         networkingRequest.headers = headers;
         networkingRequest.HTTPMethod = HTTPMethod;
         networkingRequest.requestSerializer = [[AWSJSONRequestSerializer alloc] initWithJSONDefinition:[[AWSDynamoDBResources sharedInstance] JSONObject]
-                                                                                            actionName:operationName];
+                                                                                                   actionName:operationName];
         networkingRequest.responseSerializer = [[AWSDynamoDBResponseSerializer alloc] initWithJSONDefinition:[[AWSDynamoDBResources sharedInstance] JSONObject]
-                                                                                                  actionName:operationName
-                                                                                                 outputClass:outputClass];
+                                                                                             actionName:operationName
+                                                                                            outputClass:outputClass];
+        
         return [self.networking sendRequest:networkingRequest];
     }
 }
@@ -269,7 +284,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)batchGetItem:(AWSDynamoDBBatchGetItemInput *)request
-   completionHandler:(void (^)(AWSDynamoDBBatchGetItemOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBBatchGetItemOutput *response, NSError *error))completionHandler {
     [[self batchGetItem:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBBatchGetItemOutput *> * _Nonnull task) {
         AWSDynamoDBBatchGetItemOutput *result = task.result;
         NSError *error = task.error;
@@ -325,7 +340,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)createTable:(AWSDynamoDBCreateTableInput *)request
-  completionHandler:(void (^)(AWSDynamoDBCreateTableOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBCreateTableOutput *response, NSError *error))completionHandler {
     [[self createTable:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBCreateTableOutput *> * _Nonnull task) {
         AWSDynamoDBCreateTableOutput *result = task.result;
         NSError *error = task.error;
@@ -353,7 +368,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)deleteItem:(AWSDynamoDBDeleteItemInput *)request
- completionHandler:(void (^)(AWSDynamoDBDeleteItemOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBDeleteItemOutput *response, NSError *error))completionHandler {
     [[self deleteItem:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBDeleteItemOutput *> * _Nonnull task) {
         AWSDynamoDBDeleteItemOutput *result = task.result;
         NSError *error = task.error;
@@ -381,9 +396,37 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)deleteTable:(AWSDynamoDBDeleteTableInput *)request
-  completionHandler:(void (^)(AWSDynamoDBDeleteTableOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBDeleteTableOutput *response, NSError *error))completionHandler {
     [[self deleteTable:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBDeleteTableOutput *> * _Nonnull task) {
         AWSDynamoDBDeleteTableOutput *result = task.result;
+        NSError *error = task.error;
+
+        if (task.exception) {
+            AWSLogError(@"Fatal exception: [%@]", task.exception);
+            kill(getpid(), SIGKILL);
+        }
+
+        if (completionHandler) {
+            completionHandler(result, error);
+        }
+
+        return nil;
+    }];
+}
+
+- (AWSTask<AWSDynamoDBDescribeLimitsOutput *> *)describeLimits:(AWSDynamoDBDescribeLimitsInput *)request {
+    return [self invokeRequest:request
+                    HTTPMethod:AWSHTTPMethodPOST
+                     URLString:@""
+                  targetPrefix:@"DynamoDB_20120810"
+                 operationName:@"DescribeLimits"
+                   outputClass:[AWSDynamoDBDescribeLimitsOutput class]];
+}
+
+- (void)describeLimits:(AWSDynamoDBDescribeLimitsInput *)request
+     completionHandler:(void (^)(AWSDynamoDBDescribeLimitsOutput *response, NSError *error))completionHandler {
+    [[self describeLimits:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBDescribeLimitsOutput *> * _Nonnull task) {
+        AWSDynamoDBDescribeLimitsOutput *result = task.result;
         NSError *error = task.error;
 
         if (task.exception) {
@@ -409,7 +452,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)describeTable:(AWSDynamoDBDescribeTableInput *)request
-    completionHandler:(void (^)(AWSDynamoDBDescribeTableOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBDescribeTableOutput *response, NSError *error))completionHandler {
     [[self describeTable:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBDescribeTableOutput *> * _Nonnull task) {
         AWSDynamoDBDescribeTableOutput *result = task.result;
         NSError *error = task.error;
@@ -437,7 +480,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)getItem:(AWSDynamoDBGetItemInput *)request
-completionHandler:(void (^)(AWSDynamoDBGetItemOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBGetItemOutput *response, NSError *error))completionHandler {
     [[self getItem:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBGetItemOutput *> * _Nonnull task) {
         AWSDynamoDBGetItemOutput *result = task.result;
         NSError *error = task.error;
@@ -465,7 +508,7 @@ completionHandler:(void (^)(AWSDynamoDBGetItemOutput *response, NSError *error))
 }
 
 - (void)listTables:(AWSDynamoDBListTablesInput *)request
- completionHandler:(void (^)(AWSDynamoDBListTablesOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBListTablesOutput *response, NSError *error))completionHandler {
     [[self listTables:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBListTablesOutput *> * _Nonnull task) {
         AWSDynamoDBListTablesOutput *result = task.result;
         NSError *error = task.error;
@@ -493,7 +536,7 @@ completionHandler:(void (^)(AWSDynamoDBGetItemOutput *response, NSError *error))
 }
 
 - (void)putItem:(AWSDynamoDBPutItemInput *)request
-completionHandler:(void (^)(AWSDynamoDBPutItemOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBPutItemOutput *response, NSError *error))completionHandler {
     [[self putItem:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBPutItemOutput *> * _Nonnull task) {
         AWSDynamoDBPutItemOutput *result = task.result;
         NSError *error = task.error;
@@ -521,7 +564,7 @@ completionHandler:(void (^)(AWSDynamoDBPutItemOutput *response, NSError *error))
 }
 
 - (void)query:(AWSDynamoDBQueryInput *)request
-completionHandler:(void (^)(AWSDynamoDBQueryOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBQueryOutput *response, NSError *error))completionHandler {
     [[self query:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBQueryOutput *> * _Nonnull task) {
         AWSDynamoDBQueryOutput *result = task.result;
         NSError *error = task.error;
@@ -549,7 +592,7 @@ completionHandler:(void (^)(AWSDynamoDBQueryOutput *response, NSError *error))co
 }
 
 - (void)scan:(AWSDynamoDBScanInput *)request
-completionHandler:(void (^)(AWSDynamoDBScanOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBScanOutput *response, NSError *error))completionHandler {
     [[self scan:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBScanOutput *> * _Nonnull task) {
         AWSDynamoDBScanOutput *result = task.result;
         NSError *error = task.error;
@@ -577,7 +620,7 @@ completionHandler:(void (^)(AWSDynamoDBScanOutput *response, NSError *error))com
 }
 
 - (void)updateItem:(AWSDynamoDBUpdateItemInput *)request
- completionHandler:(void (^)(AWSDynamoDBUpdateItemOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBUpdateItemOutput *response, NSError *error))completionHandler {
     [[self updateItem:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBUpdateItemOutput *> * _Nonnull task) {
         AWSDynamoDBUpdateItemOutput *result = task.result;
         NSError *error = task.error;
@@ -605,7 +648,7 @@ completionHandler:(void (^)(AWSDynamoDBScanOutput *response, NSError *error))com
 }
 
 - (void)updateTable:(AWSDynamoDBUpdateTableInput *)request
-  completionHandler:(void (^)(AWSDynamoDBUpdateTableOutput *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSDynamoDBUpdateTableOutput *response, NSError *error))completionHandler {
     [[self updateTable:request] continueWithBlock:^id _Nullable(AWSTask<AWSDynamoDBUpdateTableOutput *> * _Nonnull task) {
         AWSDynamoDBUpdateTableOutput *result = task.result;
         NSError *error = task.error;
@@ -614,13 +657,15 @@ completionHandler:(void (^)(AWSDynamoDBScanOutput *response, NSError *error))com
             AWSLogError(@"Fatal exception: [%@]", task.exception);
             kill(getpid(), SIGKILL);
         }
-        
+
         if (completionHandler) {
             completionHandler(result, error);
         }
-        
+
         return nil;
     }];
 }
+
+#pragma mark -
 
 @end

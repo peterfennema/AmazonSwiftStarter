@@ -16,6 +16,7 @@
 #import <Foundation/Foundation.h>
 #import "AWSCore.h"
 #import "AWSCognitoIdentityModel.h"
+#import "AWSCognitoIdentityResources.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -118,7 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerCognitoIdentityWithConfiguration:(AWSServiceConfiguration *)configuration forKey:(NSString *)key;
 
 /**
- Retrieves the service client associated with the key. You need to call `+ registerCognitoIdentityWithConfiguration:forKey:` before invoking this method. If `+ registerCognitoIdentityWithConfiguration:forKey:` has not been called in advance or the key does not exist, this method returns `nil`.
+ Retrieves the service client associated with the key. You need to call `+ registerCognitoIdentityWithConfiguration:forKey:` before invoking this method.
 
  For example, set the default service configuration in `- application:didFinishLaunchingWithOptions:`
 
@@ -171,22 +172,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)removeCognitoIdentityForKey:(NSString *)key;
 
 /**
- Instantiates the service client with the given service configuration.
- 
- @warning This method has been deprecated. Use `+ registerCognitoIdentityWithConfiguration:forKey:` and `+ CognitoIdentityForKey:` instead.
- 
- @warning Once the client is instantiated, do not modify the configuration object. It may cause unspecified behaviors.
- 
- @warning Unlike the singleton method, you are responsible for maintaining a strong reference to this object. If the service client is released before completing a service request, the request may fail with unspecified errors.
- 
- @param configuration The service configuration object.
- 
- @return An instance of the service client.
- */
-- (instancetype)initWithConfiguration:(AWSServiceConfiguration *)configuration __attribute__ ((deprecated("Use '+ registerCognitoIdentityWithConfiguration:forKey:' and '+ CognitoIdentityForKey:' instead.")));
-
-/**
- <p>Creates a new identity pool. The identity pool is a store of user identity information that is specific to your AWS account. The limit on identity pools is 60 per account. You must use AWS Developer credentials to call this API.</p>
+ <p>Creates a new identity pool. The identity pool is a store of user identity information that is specific to your AWS account. The limit on identity pools is 60 per account. The keys for <code>SupportedLoginProviders</code> are as follows: <ul><li>Facebook: <code>graph.facebook.com</code></li><li>Google: <code>accounts.google.com</code></li><li>Amazon: <code>www.amazon.com</code></li><li>Twitter: <code>api.twitter.com</code></li><li>Digits: <code>www.digits.com</code></li></ul> You must use AWS Developer credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the CreateIdentityPool service method.
 
@@ -198,7 +184,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (AWSTask<AWSCognitoIdentityIdentityPool *> *)createIdentityPool:(AWSCognitoIdentityCreateIdentityPoolInput *)request;
 
 /**
- <p>Creates a new identity pool. The identity pool is a store of user identity information that is specific to your AWS account. The limit on identity pools is 60 per account. You must use AWS Developer credentials to call this API.</p>
+ <p>Creates a new identity pool. The identity pool is a store of user identity information that is specific to your AWS account. The limit on identity pools is 60 per account. The keys for <code>SupportedLoginProviders</code> are as follows: <ul><li>Facebook: <code>graph.facebook.com</code></li><li>Google: <code>accounts.google.com</code></li><li>Amazon: <code>www.amazon.com</code></li><li>Twitter: <code>api.twitter.com</code></li><li>Digits: <code>www.digits.com</code></li></ul> You must use AWS Developer credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the CreateIdentityPool service method.
  @param completionHandler The completion handler to call when the load request is complete.
@@ -209,6 +195,31 @@ NS_ASSUME_NONNULL_BEGIN
  @see AWSCognitoIdentityIdentityPool
  */
 - (void)createIdentityPool:(AWSCognitoIdentityCreateIdentityPoolInput *)request completionHandler:(void (^ _Nullable)(AWSCognitoIdentityIdentityPool * _Nullable response, NSError * _Nullable error))completionHandler;
+
+/**
+ <p>Deletes identities from an identity pool. You can specify a list of 1-60 identities that you want to delete.</p><p>You must use AWS Developer credentials to call this API.</p>
+ 
+ @param request A container for the necessary parameters to execute the DeleteIdentities service method.
+
+ @return An instance of `AWSTask`. On successful execution, `task.result` will contain an instance of `AWSCognitoIdentityDeleteIdentitiesResponse`. On failed execution, `task.error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`.
+ 
+ @see AWSCognitoIdentityDeleteIdentitiesInput
+ @see AWSCognitoIdentityDeleteIdentitiesResponse
+ */
+- (AWSTask<AWSCognitoIdentityDeleteIdentitiesResponse *> *)deleteIdentities:(AWSCognitoIdentityDeleteIdentitiesInput *)request;
+
+/**
+ <p>Deletes identities from an identity pool. You can specify a list of 1-60 identities that you want to delete.</p><p>You must use AWS Developer credentials to call this API.</p>
+ 
+ @param request A container for the necessary parameters to execute the DeleteIdentities service method.
+ @param completionHandler The completion handler to call when the load request is complete.
+                          `response` - A response object, or `nil` if the request failed.
+                          `error` - An error object that indicates why the request failed, or `nil` if the request was successful. On failed execution, `error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`.
+ 
+ @see AWSCognitoIdentityDeleteIdentitiesInput
+ @see AWSCognitoIdentityDeleteIdentitiesResponse
+ */
+- (void)deleteIdentities:(AWSCognitoIdentityDeleteIdentitiesInput *)request completionHandler:(void (^ _Nullable)(AWSCognitoIdentityDeleteIdentitiesResponse * _Nullable response, NSError * _Nullable error))completionHandler;
 
 /**
  <p>Deletes a user pool. Once a pool is deleted, users will not be able to authenticate with the pool.</p><p>You must use AWS Developer credentials to call this API.</p>
@@ -283,7 +294,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)describeIdentityPool:(AWSCognitoIdentityDescribeIdentityPoolInput *)request completionHandler:(void (^ _Nullable)(AWSCognitoIdentityIdentityPool * _Nullable response, NSError * _Nullable error))completionHandler;
 
 /**
- <p>Returns credentials for the the provided identity ID. Any provided logins will be validated against supported login providers. If the token is for cognito-identity.amazonaws.com, it will be passed through to AWS Security Token Service with the appropriate role for the token.</p><p>This is a public API. You do not need any credentials to call this API.</p>
+ <p>Returns credentials for the provided identity ID. Any provided logins will be validated against supported login providers. If the token is for cognito-identity.amazonaws.com, it will be passed through to AWS Security Token Service with the appropriate role for the token.</p><p>This is a public API. You do not need any credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the GetCredentialsForIdentity service method.
 
@@ -295,7 +306,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (AWSTask<AWSCognitoIdentityGetCredentialsForIdentityResponse *> *)getCredentialsForIdentity:(AWSCognitoIdentityGetCredentialsForIdentityInput *)request;
 
 /**
- <p>Returns credentials for the the provided identity ID. Any provided logins will be validated against supported login providers. If the token is for cognito-identity.amazonaws.com, it will be passed through to AWS Security Token Service with the appropriate role for the token.</p><p>This is a public API. You do not need any credentials to call this API.</p>
+ <p>Returns credentials for the provided identity ID. Any provided logins will be validated against supported login providers. If the token is for cognito-identity.amazonaws.com, it will be passed through to AWS Security Token Service with the appropriate role for the token.</p><p>This is a public API. You do not need any credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the GetCredentialsForIdentity service method.
  @param completionHandler The completion handler to call when the load request is complete.
@@ -308,7 +319,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)getCredentialsForIdentity:(AWSCognitoIdentityGetCredentialsForIdentityInput *)request completionHandler:(void (^ _Nullable)(AWSCognitoIdentityGetCredentialsForIdentityResponse * _Nullable response, NSError * _Nullable error))completionHandler;
 
 /**
- <p>Generates (or retrieves) a Cognito ID. Supplying multiple logins will create an implicit linked account.</p><p>token+";"+tokenSecret.</p><p>This is a public API. You do not need any credentials to call this API.</p>
+ <p>Generates (or retrieves) a Cognito ID. Supplying multiple logins will create an implicit linked account.</p><p>This is a public API. You do not need any credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the GetId service method.
 
@@ -320,7 +331,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (AWSTask<AWSCognitoIdentityGetIdResponse *> *)getId:(AWSCognitoIdentityGetIdInput *)request;
 
 /**
- <p>Generates (or retrieves) a Cognito ID. Supplying multiple logins will create an implicit linked account.</p><p>token+";"+tokenSecret.</p><p>This is a public API. You do not need any credentials to call this API.</p>
+ <p>Generates (or retrieves) a Cognito ID. Supplying multiple logins will create an implicit linked account.</p><p>This is a public API. You do not need any credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the GetId service method.
  @param completionHandler The completion handler to call when the load request is complete.
@@ -433,7 +444,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)listIdentities:(AWSCognitoIdentityListIdentitiesInput *)request completionHandler:(void (^ _Nullable)(AWSCognitoIdentityListIdentitiesResponse * _Nullable response, NSError * _Nullable error))completionHandler;
 
 /**
- <p>Lists all of the Cognito identity pools registered for your account.</p><p>This is a public API. You do not need any credentials to call this API.</p>
+ <p>Lists all of the Cognito identity pools registered for your account.</p><p>You must use AWS Developer credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the ListIdentityPools service method.
 
@@ -445,7 +456,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (AWSTask<AWSCognitoIdentityListIdentityPoolsResponse *> *)listIdentityPools:(AWSCognitoIdentityListIdentityPoolsInput *)request;
 
 /**
- <p>Lists all of the Cognito identity pools registered for your account.</p><p>This is a public API. You do not need any credentials to call this API.</p>
+ <p>Lists all of the Cognito identity pools registered for your account.</p><p>You must use AWS Developer credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the ListIdentityPools service method.
  @param completionHandler The completion handler to call when the load request is complete.
@@ -512,7 +523,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param request A container for the necessary parameters to execute the SetIdentityPoolRoles service method.
 
- @return An instance of `AWSTask`. On successful execution, `task.result` will be `nil`. On failed execution, `task.error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorResourceNotFound`, `AWSCognitoIdentityErrorNotAuthorized`, `AWSCognitoIdentityErrorResourceConflict`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`, `AWSCognitoIdentityErrorLimitExceeded`.
+ @return An instance of `AWSTask`. On successful execution, `task.result` will be `nil`. On failed execution, `task.error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorResourceNotFound`, `AWSCognitoIdentityErrorNotAuthorized`, `AWSCognitoIdentityErrorResourceConflict`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`, `AWSCognitoIdentityErrorConcurrentModification`.
  
  @see AWSCognitoIdentitySetIdentityPoolRolesInput
  */
@@ -523,14 +534,14 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param request A container for the necessary parameters to execute the SetIdentityPoolRoles service method.
  @param completionHandler The completion handler to call when the load request is complete.
-                          `error` - An error object that indicates why the request failed, or `nil` if the request was successful. On failed execution, `error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorResourceNotFound`, `AWSCognitoIdentityErrorNotAuthorized`, `AWSCognitoIdentityErrorResourceConflict`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`, `AWSCognitoIdentityErrorLimitExceeded`.
+                          `error` - An error object that indicates why the request failed, or `nil` if the request was successful. On failed execution, `error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorResourceNotFound`, `AWSCognitoIdentityErrorNotAuthorized`, `AWSCognitoIdentityErrorResourceConflict`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`, `AWSCognitoIdentityErrorConcurrentModification`.
  
  @see AWSCognitoIdentitySetIdentityPoolRolesInput
  */
 - (void)setIdentityPoolRoles:(AWSCognitoIdentitySetIdentityPoolRolesInput *)request completionHandler:(void (^ _Nullable)(NSError * _Nullable error))completionHandler;
 
 /**
- <p>Unlinks a <code>DeveloperUserIdentifier</code> from an existing identity. Unlinked developer users will be considered new identities next time they are seen. If, for a given Cognito identity, you remove all federated identities as well as the developer user identifier, the Cognito identity becomes inaccessible.</p><p>This is a public API. You do not need any credentials to call this API.</p>
+ <p>Unlinks a <code>DeveloperUserIdentifier</code> from an existing identity. Unlinked developer users will be considered new identities next time they are seen. If, for a given Cognito identity, you remove all federated identities as well as the developer user identifier, the Cognito identity becomes inaccessible.</p><p>You must use AWS Developer credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the UnlinkDeveloperIdentity service method.
 
@@ -541,7 +552,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (AWSTask *)unlinkDeveloperIdentity:(AWSCognitoIdentityUnlinkDeveloperIdentityInput *)request;
 
 /**
- <p>Unlinks a <code>DeveloperUserIdentifier</code> from an existing identity. Unlinked developer users will be considered new identities next time they are seen. If, for a given Cognito identity, you remove all federated identities as well as the developer user identifier, the Cognito identity becomes inaccessible.</p><p>This is a public API. You do not need any credentials to call this API.</p>
+ <p>Unlinks a <code>DeveloperUserIdentifier</code> from an existing identity. Unlinked developer users will be considered new identities next time they are seen. If, for a given Cognito identity, you remove all federated identities as well as the developer user identifier, the Cognito identity becomes inaccessible.</p><p>You must use AWS Developer credentials to call this API.</p>
  
  @param request A container for the necessary parameters to execute the UnlinkDeveloperIdentity service method.
  @param completionHandler The completion handler to call when the load request is complete.
@@ -578,7 +589,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param request A container for the necessary parameters to execute the UpdateIdentityPool service method.
 
- @return An instance of `AWSTask`. On successful execution, `task.result` will contain an instance of `AWSCognitoIdentityIdentityPool`. On failed execution, `task.error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorResourceNotFound`, `AWSCognitoIdentityErrorNotAuthorized`, `AWSCognitoIdentityErrorResourceConflict`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`, `AWSCognitoIdentityErrorLimitExceeded`.
+ @return An instance of `AWSTask`. On successful execution, `task.result` will contain an instance of `AWSCognitoIdentityIdentityPool`. On failed execution, `task.error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorResourceNotFound`, `AWSCognitoIdentityErrorNotAuthorized`, `AWSCognitoIdentityErrorResourceConflict`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`, `AWSCognitoIdentityErrorConcurrentModification`, `AWSCognitoIdentityErrorLimitExceeded`.
  
  @see AWSCognitoIdentityIdentityPool
  @see AWSCognitoIdentityIdentityPool
@@ -591,7 +602,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param request A container for the necessary parameters to execute the UpdateIdentityPool service method.
  @param completionHandler The completion handler to call when the load request is complete.
                           `response` - A response object, or `nil` if the request failed.
-                          `error` - An error object that indicates why the request failed, or `nil` if the request was successful. On failed execution, `error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorResourceNotFound`, `AWSCognitoIdentityErrorNotAuthorized`, `AWSCognitoIdentityErrorResourceConflict`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`, `AWSCognitoIdentityErrorLimitExceeded`.
+                          `error` - An error object that indicates why the request failed, or `nil` if the request was successful. On failed execution, `error` may contain an `NSError` with `AWSCognitoIdentityErrorDomain` domain and the following error code: `AWSCognitoIdentityErrorInvalidParameter`, `AWSCognitoIdentityErrorResourceNotFound`, `AWSCognitoIdentityErrorNotAuthorized`, `AWSCognitoIdentityErrorResourceConflict`, `AWSCognitoIdentityErrorTooManyRequests`, `AWSCognitoIdentityErrorInternalError`, `AWSCognitoIdentityErrorConcurrentModification`, `AWSCognitoIdentityErrorLimitExceeded`.
  
  @see AWSCognitoIdentityIdentityPool
  @see AWSCognitoIdentityIdentityPool

@@ -12,9 +12,9 @@ class AMZRemoteService {
     
     var currentUser: UserData?
 
-    private static var sharedInstance: AMZRemoteService?
+    fileprivate static var sharedInstance: AMZRemoteService?
     
-    private init() {}
+    fileprivate init() {}
     
     static func defaultService() -> RemoteService {
         if sharedInstance == nil {
@@ -23,7 +23,7 @@ class AMZRemoteService {
         return sharedInstance!
     }
     
-    private func randomWait() {
+    fileprivate func randomWait() {
         let randomWaitingTime = arc4random_uniform(2 * 1000000)
         usleep(randomWaitingTime)
     }
@@ -33,39 +33,39 @@ class AMZRemoteService {
 extension AMZRemoteService: RemoteService {
     
     
-    func createCurrentUser(userData: UserData? , completion: ErrorResultBlock) {
+    func createCurrentUser(_ userData: UserData? , completion: @escaping ErrorResultBlock) {
         assert(currentUser == nil, "currentUser should not exist when createCurrentUser(..) is called")
         assert(userData == nil || userData!.userId == nil, "You can not create a user with a given userId. UserIds are assigned automatically")
-        NSOperationQueue().addOperationWithBlock {
+        OperationQueue().addOperation {
             // simulate a network call delay
             self.randomWait()
             let newUserData = UserDataValue()
             if let userData = userData {
                 newUserData.updateWithData(userData)
             }
-            newUserData.userId = NSUUID().UUIDString
+            newUserData.userId = UUID().uuidString
             self.currentUser = newUserData
-            completion(error: nil)
+            completion(nil)
         }
     }
     
-    func updateCurrentUser(userData: UserData, completion: ErrorResultBlock) {
+    func updateCurrentUser(_ userData: UserData, completion: @escaping ErrorResultBlock) {
         assert(currentUser != nil, "currentUser should already exist when updateCurrentUser(..) is called")
         assert(userData.userId == nil || userData.userId == currentUser!.userId, "Updating current user with a different userId is not allowed")
-        NSOperationQueue().addOperationWithBlock {
+        OperationQueue().addOperation {
             // simulate a network call delay
             self.randomWait()
             self.currentUser!.updateWithData(userData)
-            completion(error: nil)
+            completion(nil)
         }
     }
     
-    func fetchCurrentUser(completion: UserDataResultBlock ) {
-        NSOperationQueue().addOperationWithBlock {
+    func fetchCurrentUser(_ completion: @escaping UserDataResultBlock ) {
+        OperationQueue().addOperation {
             // simulate a network call delay
             self.randomWait()
             // simulate the fetched result by returning the currentUser
-            completion(userData: self.currentUser, error: nil)
+            completion(self.currentUser, nil)
         }
     }
     

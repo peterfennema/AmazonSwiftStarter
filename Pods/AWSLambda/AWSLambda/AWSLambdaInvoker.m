@@ -26,6 +26,8 @@ NSString *const AWSLambdaInvokerErrorMessageKey = @"errorMessage";
 NSString *const AWSLambdaInvokerErrorStackTraceKey = @"stackTrace";
 NSString *const AWSLambdaInvokerUserAgent = @"invoker";
 
+static NSString *const AWSInfoLambdaInvoker = @"LambdaInvoker";
+
 @interface AWSLambda()
 
 - (instancetype)initWithConfiguration:(AWSServiceConfiguration *)configuration;
@@ -44,16 +46,27 @@ NSString *const AWSLambdaInvokerUserAgent = @"invoker";
 static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 
 + (instancetype)defaultLambdaInvoker {
-    if (![AWSServiceManager defaultServiceManager].defaultServiceConfiguration) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"`defaultServiceConfiguration` is `nil`. You need to set it before using this method."
-                                     userInfo:nil];
-    }
-
     static AWSLambdaInvoker *_defaultLambdaInvoker = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _defaultLambdaInvoker = [[AWSLambdaInvoker alloc] initWithConfiguration:AWSServiceManager.defaultServiceManager.defaultServiceConfiguration];
+        AWSServiceConfiguration *serviceConfiguration = nil;
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] defaultServiceInfo:AWSInfoLambdaInvoker];
+        if (serviceInfo) {
+            serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                               credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+        }
+
+        if (!serviceConfiguration) {
+            serviceConfiguration = [AWSServiceManager defaultServiceManager].defaultServiceConfiguration;
+        }
+
+        if (!serviceConfiguration) {
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                           reason:@"The service configuration is `nil`. You need to configure `Info.plist` or set `defaultServiceConfiguration` before using this method."
+                                         userInfo:nil];
+        }
+
+        _defaultLambdaInvoker = [[AWSLambdaInvoker alloc] initWithConfiguration:serviceConfiguration];
     });
 
     return _defaultLambdaInvoker;
@@ -71,7 +84,23 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 + (instancetype)LambdaInvokerForKey:(NSString *)key {
-    return [_serviceClients objectForKey:key];
+    @synchronized(self) {
+        AWSLambdaInvoker *serviceClient = [_serviceClients objectForKey:key];
+        if (serviceClient) {
+            return serviceClient;
+        }
+
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] serviceInfo:AWSInfoLambdaInvoker
+                                                                     forKey:key];
+        if (serviceInfo) {
+            AWSServiceConfiguration *serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                                                        credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+            [AWSLambdaInvoker registerLambdaInvokerWithConfiguration:serviceConfiguration
+                                                              forKey:key];
+        }
+
+        return [_serviceClients objectForKey:key];
+    }
 }
 
 + (void)removeLambdaInvokerForKey:(NSString *)key {
@@ -136,6 +165,24 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     }];
 }
 
+- (void)invoke:(AWSLambdaInvokerInvocationRequest *)request completionHandler:(void (^ _Nullable)(AWSLambdaInvokerInvocationResponse * _Nullable response, NSError * _Nullable error))completionHandler {
+    [[self invoke:request] continueWithBlock:^id _Nullable(AWSTask<AWSLambdaInvokerInvocationResponse *> * _Nonnull task) {
+        AWSLambdaInvokerInvocationResponse *result = task.result;
+        NSError *error = task.error;
+
+        if (task.exception) {
+            AWSLogError(@"Fatal exception: [%@]", task.exception);
+            kill(getpid(), SIGKILL);
+        }
+
+        if (completionHandler) {
+            completionHandler(result, error);
+        }
+
+        return nil;
+    }];
+}
+
 - (AWSTask *)invokeFunction:(NSString *)functionName
                 JSONObject:(id)JSONObject {
     AWSLambdaInvokerInvocationRequest *invocationRequest = [AWSLambdaInvokerInvocationRequest new];
@@ -146,6 +193,26 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     return [[self invoke:invocationRequest] continueWithSuccessBlock:^id(AWSTask *task) {
         AWSLambdaInvokerInvocationResponse *invocationResponse = task.result;
         return [AWSTask taskWithResult:invocationResponse.payload];
+    }];
+}
+
+- (void)invokeFunction:(NSString *)functionName
+            JSONObject:(id)JSONObject
+     completionHandler:(void (^ _Nullable)(id _Nullable response, NSError * _Nullable error))completionHandler {
+    [[self invokeFunction:functionName JSONObject:JSONObject] continueWithBlock:^id _Nullable(AWSTask * _Nonnull task) {
+        id result = task.result;
+        NSError *error = task.error;
+
+        if (task.exception) {
+            AWSLogError(@"Fatal exception: [%@]", task.exception);
+            kill(getpid(), SIGKILL);
+        }
+
+        if (completionHandler) {
+            completionHandler(result, error);
+        }
+
+        return nil;
     }];
 }
 

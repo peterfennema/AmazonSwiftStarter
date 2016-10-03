@@ -16,6 +16,7 @@
 #import <Foundation/Foundation.h>
 #import <AWSCore/AWSCore.h>
 #import "AWSSimpleDBModel.h"
+#import "AWSSimpleDBResources.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -118,7 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerSimpleDBWithConfiguration:(AWSServiceConfiguration *)configuration forKey:(NSString *)key;
 
 /**
- Retrieves the service client associated with the key. You need to call `+ registerSimpleDBWithConfiguration:forKey:` before invoking this method. If `+ registerSimpleDBWithConfiguration:forKey:` has not been called in advance or the key does not exist, this method returns `nil`.
+ Retrieves the service client associated with the key. You need to call `+ registerSimpleDBWithConfiguration:forKey:` before invoking this method.
 
  For example, set the default service configuration in `- application:didFinishLaunchingWithOptions:`
 
@@ -169,21 +170,6 @@ NS_ASSUME_NONNULL_BEGIN
  @param key A string to identify the service client.
  */
 + (void)removeSimpleDBForKey:(NSString *)key;
-
-/**
- Instantiates the service client with the given service configuration.
- 
- @warning This method has been deprecated. Use `+ registerSimpleDBWithConfiguration:forKey:` and `+ SimpleDBForKey:` instead.
- 
- @warning Once the client is instantiated, do not modify the configuration object. It may cause unspecified behaviors.
- 
- @warning Unlike the singleton method, you are responsible for maintaining a strong reference to this object. If the service client is released before completing a service request, the request may fail with unspecified errors.
- 
- @param configuration The service configuration object.
- 
- @return An instance of the service client.
- */
-- (instancetype)initWithConfiguration:(AWSServiceConfiguration *)configuration __attribute__ ((deprecated("Use '+ registerSimpleDBWithConfiguration:forKey:' and '+ SimpleDBForKey:' instead.")));
 
 /**
  <p> Performs multiple DeleteAttributes operations in a single call, which reduces round trips and latencies. This enables Amazon SimpleDB to optimize requests, which generally yields better throughput. </p><note><p> If you specify BatchDeleteAttributes without attributes or values, all the attributes for the item are deleted. </p><p> BatchDeleteAttributes is an idempotent operation; running it multiple times on the same item or attribute doesn't result in an error. </p><p> The BatchDeleteAttributes operation succeeds or fails in its entirety. There are no partial deletes. You can execute multiple BatchDeleteAttributes operations and other operations in parallel. However, large numbers of concurrent BatchDeleteAttributes calls can result in Service Unavailable (503) responses. </p><p> This operation is vulnerable to exceeding the maximum URL size when making a REST request using the HTTP GET method. </p><p> This operation does not support conditions using Expected.X.Name, Expected.X.Value, or Expected.X.Exists. </p></note><p> The following limitations are enforced for this operation: <ul><li>1 MB request size</li><li>25 item limit per BatchDeleteAttributes operation</li></ul></p>
@@ -402,10 +388,7 @@ NS_ASSUME_NONNULL_BEGIN
  @see AWSSimpleDBSelectRequest
  @see AWSSimpleDBSelectResult
  */
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnullability"
 - (AWSTask<AWSSimpleDBSelectResult *> *)select:(AWSSimpleDBSelectRequest *)request;
-#pragma clang diagnostic pop
 
 /**
  <p> The <code>Select</code> operation returns a set of attributes for <code>ItemNames</code> that match the select expression. <code>Select</code> is similar to the standard SQL SELECT statement. </p><p> The total size of the response cannot exceed 1 MB in total size. Amazon SimpleDB automatically adjusts the number of items returned per page to enforce this limit. For example, if the client asks to retrieve 2500 items, but each individual item is 10 kB in size, the system returns 100 items and an appropriate <code>NextToken</code> so the client can access the next page of results. </p><p> For information on how to construct select expressions, see Using Select to Create Amazon SimpleDB Queries in the Developer Guide. </p>

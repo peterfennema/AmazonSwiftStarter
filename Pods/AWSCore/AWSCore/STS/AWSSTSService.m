@@ -13,18 +13,20 @@
 // permissions and limitations under the License.
 //
 
-#import "AWSSTS.h"
-
+#import "AWSSTSService.h"
 #import "AWSNetworking.h"
 #import "AWSCategory.h"
+#import "AWSNetworking.h"
 #import "AWSSignature.h"
 #import "AWSService.h"
-#import "AWSNetworking.h"
 #import "AWSURLRequestSerialization.h"
 #import "AWSURLResponseSerialization.h"
 #import "AWSURLRequestRetryHandler.h"
 #import "AWSSynchronizedMutableDictionary.h"
 #import "AWSSTSResources.h"
+
+static NSString *const AWSInfoSTS = @"STS";
+
 
 @interface AWSSTSResponseSerializer : AWSXMLResponseSerializer
 
@@ -37,9 +39,6 @@
 static NSDictionary *errorCodeDictionary = nil;
 + (void)initialize {
     errorCodeDictionary = @{
-                            @"IncompleteSignature" : @(AWSSTSErrorIncompleteSignature),
-                            @"InvalidClientTokenId" : @(AWSSTSErrorInvalidClientTokenId),
-                            @"MissingAuthenticationToken" : @(AWSSTSErrorMissingAuthenticationToken),
                             @"ExpiredTokenException" : @(AWSSTSErrorExpiredToken),
                             @"IDPCommunicationError" : @(AWSSTSErrorIDPCommunicationError),
                             @"IDPRejectedClaim" : @(AWSSTSErrorIDPRejectedClaim),
@@ -47,6 +46,7 @@ static NSDictionary *errorCodeDictionary = nil;
                             @"InvalidIdentityToken" : @(AWSSTSErrorInvalidIdentityToken),
                             @"MalformedPolicyDocument" : @(AWSSTSErrorMalformedPolicyDocument),
                             @"PackedPolicyTooLarge" : @(AWSSTSErrorPackedPolicyTooLarge),
+                            @"RegionDisabledException" : @(AWSSTSErrorRegionDisabled),
                             };
 }
 
@@ -62,31 +62,40 @@ static NSDictionary *errorCodeDictionary = nil;
                                           currentRequest:currentRequest
                                                     data:data
                                                    error:error];
-
     if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
-        NSDictionary *errorInfo = responseObject[@"Error"];
-        if (errorInfo[@"Code"] && errorCodeDictionary[errorInfo[@"Code"]]) {
-            if (error) {
-                *error = [NSError errorWithDomain:AWSSTSErrorDomain
-                                             code:[errorCodeDictionary[errorInfo[@"Code"]] integerValue]
-                                         userInfo:errorInfo
-                          ];
-                return responseObject;
-            }
-        } else if (errorInfo) {
-            if (error) {
-                *error = [NSError errorWithDomain:AWSSTSErrorDomain
-                                             code:AWSSTSErrorUnknown
-                                         userInfo:errorInfo];
-            }
-        } else if (self.outputClass) {
-            responseObject = [AWSMTLJSONAdapter modelOfClass:self.outputClass
-                                       fromJSONDictionary:responseObject
-                                                    error:error];
-        }
+    	if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
+	        if ([errorCodeDictionary objectForKey:[[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]]) {
+	            if (error) {
+	                *error = [NSError errorWithDomain:AWSSTSErrorDomain
+	                                             code:[[errorCodeDictionary objectForKey:[[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]] integerValue]
+	                                         userInfo:responseObject];
+	            }
+	            return responseObject;
+	        } else if ([[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]) {
+	            if (error) {
+	                *error = [NSError errorWithDomain:AWSCognitoIdentityErrorDomain
+	                                             code:AWSCognitoIdentityErrorUnknown
+	                                         userInfo:responseObject];
+	            }
+	            return responseObject;
+	        }
+    	}
     }
 
-    return responseObject;
+    if (!*error && response.statusCode/100 != 2) {
+        *error = [NSError errorWithDomain:AWSSTSErrorDomain
+                                     code:AWSSTSErrorUnknown
+                                 userInfo:nil];
+    }
+
+    if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
+        if (self.outputClass) {
+            responseObject = [AWSMTLJSONAdapter modelOfClass:self.outputClass
+                                          fromJSONDictionary:responseObject
+                                                       error:error];
+        }
+    }
+	    return responseObject;
 }
 
 @end
@@ -96,42 +105,6 @@ static NSDictionary *errorCodeDictionary = nil;
 @end
 
 @implementation AWSSTSRequestRetryHandler
-
-- (AWSNetworkingRetryType)shouldRetry:(uint32_t)currentRetryCount
-                             response:(NSHTTPURLResponse *)response
-                                 data:(NSData *)data
-                                error:(NSError *)error {
-    AWSNetworkingRetryType retryType = [super shouldRetry:currentRetryCount
-                                                 response:response
-                                                     data:data
-                                                    error:error];
-    if(retryType == AWSNetworkingRetryTypeShouldNotRetry
-       && currentRetryCount < self.maxRetryCount) {
-        if ([error.domain isEqualToString:AWSSTSErrorDomain]) {
-            switch (error.code) {
-                case AWSSTSErrorIncompleteSignature:
-                case AWSSTSErrorInvalidClientTokenId:
-                case AWSSTSErrorMissingAuthenticationToken:
-                    retryType = AWSNetworkingRetryTypeShouldRefreshCredentialsAndRetry;
-                    break;
-
-                default:
-                    break;
-            }
-        } else if ([error.domain isEqualToString:AWSGeneralErrorDomain]) {
-            switch (error.code) {
-                case AWSGeneralErrorSignatureDoesNotMatch:
-                    retryType = AWSNetworkingRetryTypeShouldCorrectClockSkewAndRetry;
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-
-    return retryType;
-}
 
 @end
 
@@ -154,24 +127,40 @@ static NSDictionary *errorCodeDictionary = nil;
 
 @end
 
+@interface AWSEndpoint()
+
+- (void) setRegion:(AWSRegionType)regionType service:(AWSServiceType)serviceType;
+
+@end
+
 @implementation AWSSTS
+
+
+#pragma mark - Setup
 
 static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 
 + (instancetype)defaultSTS {
-    if (![AWSServiceManager defaultServiceManager].defaultServiceConfiguration) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"`defaultServiceConfiguration` is `nil`. You need to set it before using this method."
-                                     userInfo:nil];
-    }
-
     static AWSSTS *_defaultSTS = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        _defaultSTS = [[AWSSTS alloc] initWithConfiguration:AWSServiceManager.defaultServiceManager.defaultServiceConfiguration];
-#pragma clang diagnostic pop
+        AWSServiceConfiguration *serviceConfiguration = nil;
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] defaultServiceInfo:AWSInfoSTS];
+        if (serviceInfo) {
+            serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                               credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+        }
+
+        if (!serviceConfiguration) {
+            serviceConfiguration = [AWSServiceManager defaultServiceManager].defaultServiceConfiguration;
+        }
+
+        if (!serviceConfiguration) {
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                           reason:@"The service configuration is `nil`. You need to configure `Info.plist` or set `defaultServiceConfiguration` before using this method."
+                                         userInfo:nil];
+        }
+        _defaultSTS = [[AWSSTS alloc] initWithConfiguration:serviceConfiguration];
     });
 
     return _defaultSTS;
@@ -182,15 +171,28 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     dispatch_once(&onceToken, ^{
         _serviceClients = [AWSSynchronizedMutableDictionary new];
     });
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [_serviceClients setObject:[[AWSSTS alloc] initWithConfiguration:configuration]
                         forKey:key];
-#pragma clang diagnostic pop
 }
 
 + (instancetype)STSForKey:(NSString *)key {
-    return [_serviceClients objectForKey:key];
+    @synchronized(self) {
+        AWSSTS *serviceClient = [_serviceClients objectForKey:key];
+        if (serviceClient) {
+            return serviceClient;
+        }
+
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] serviceInfo:AWSInfoSTS
+                                                                     forKey:key];
+        if (serviceInfo) {
+            AWSServiceConfiguration *serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                                                        credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+            [AWSSTS registerSTSWithConfiguration:serviceConfiguration
+                                                                forKey:key];
+        }
+
+        return [_serviceClients objectForKey:key];
+    }
 }
 
 + (void)removeSTSForKey:(NSString *)key {
@@ -204,14 +206,21 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     return nil;
 }
 
+#pragma mark -
+
 - (instancetype)initWithConfiguration:(AWSServiceConfiguration *)configuration {
     if (self = [super init]) {
         _configuration = [configuration copy];
-
-        _configuration.endpoint = [[AWSEndpoint alloc] initWithRegion:_configuration.regionType
+       	
+        if(!configuration.endpoint){
+            _configuration.endpoint = [[AWSEndpoint alloc] initWithRegion:_configuration.regionType
                                                               service:AWSServiceSTS
                                                          useUnsafeURL:NO];
-
+        }else{
+            [_configuration.endpoint setRegion:_configuration.regionType
+                                      service:AWSServiceSTS];
+        }
+       	
         AWSSignatureV4Signer *signer = [[AWSSignatureV4Signer alloc] initWithCredentialsProvider:_configuration.credentialsProvider
                                                                                         endpoint:_configuration.endpoint];
         AWSNetworkingRequestInterceptor *baseInterceptor = [[AWSNetworkingRequestInterceptor alloc] initWithUserAgent:_configuration.userAgent];
@@ -219,10 +228,11 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 
         _configuration.baseURL = _configuration.endpoint.URL;
         _configuration.retryHandler = [[AWSSTSRequestRetryHandler alloc] initWithMaximumRetryCount:_configuration.maxRetryCount];
-
+         
+		
         _networking = [[AWSNetworking alloc] initWithConfiguration:_configuration];
     }
-
+    
     return self;
 }
 
@@ -237,19 +247,21 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
         if (!request) {
             request = [AWSRequest new];
         }
-        
+
         AWSNetworkingRequest *networkingRequest = request.internalRequest;
         if (request) {
             networkingRequest.parameters = [[AWSMTLJSONAdapter JSONDictionaryFromModel:request] aws_removeNullValues];
         } else {
             networkingRequest.parameters = @{};
         }
+
         networkingRequest.HTTPMethod = HTTPMethod;
         networkingRequest.requestSerializer = [[AWSQueryStringRequestSerializer alloc] initWithJSONDefinition:[[AWSSTSResources sharedInstance] JSONObject]
                                                                                                    actionName:operationName];
         networkingRequest.responseSerializer = [[AWSSTSResponseSerializer alloc] initWithJSONDefinition:[[AWSSTSResources sharedInstance] JSONObject]
                                                                                              actionName:operationName
                                                                                             outputClass:outputClass];
+        
         return [self.networking sendRequest:networkingRequest];
     }
 }
@@ -266,7 +278,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)assumeRole:(AWSSTSAssumeRoleRequest *)request
- completionHandler:(void (^)(AWSSTSAssumeRoleResponse *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSTSAssumeRoleResponse *response, NSError *error))completionHandler {
     [[self assumeRole:request] continueWithBlock:^id _Nullable(AWSTask<AWSSTSAssumeRoleResponse *> * _Nonnull task) {
         AWSSTSAssumeRoleResponse *result = task.result;
         NSError *error = task.error;
@@ -294,7 +306,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)assumeRoleWithSAML:(AWSSTSAssumeRoleWithSAMLRequest *)request
-         completionHandler:(void (^)(AWSSTSAssumeRoleWithSAMLResponse *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSTSAssumeRoleWithSAMLResponse *response, NSError *error))completionHandler {
     [[self assumeRoleWithSAML:request] continueWithBlock:^id _Nullable(AWSTask<AWSSTSAssumeRoleWithSAMLResponse *> * _Nonnull task) {
         AWSSTSAssumeRoleWithSAMLResponse *result = task.result;
         NSError *error = task.error;
@@ -322,7 +334,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)assumeRoleWithWebIdentity:(AWSSTSAssumeRoleWithWebIdentityRequest *)request
-                completionHandler:(void (^)(AWSSTSAssumeRoleWithWebIdentityResponse *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSTSAssumeRoleWithWebIdentityResponse *response, NSError *error))completionHandler {
     [[self assumeRoleWithWebIdentity:request] continueWithBlock:^id _Nullable(AWSTask<AWSSTSAssumeRoleWithWebIdentityResponse *> * _Nonnull task) {
         AWSSTSAssumeRoleWithWebIdentityResponse *result = task.result;
         NSError *error = task.error;
@@ -350,9 +362,37 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)decodeAuthorizationMessage:(AWSSTSDecodeAuthorizationMessageRequest *)request
-                 completionHandler:(void (^)(AWSSTSDecodeAuthorizationMessageResponse *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSTSDecodeAuthorizationMessageResponse *response, NSError *error))completionHandler {
     [[self decodeAuthorizationMessage:request] continueWithBlock:^id _Nullable(AWSTask<AWSSTSDecodeAuthorizationMessageResponse *> * _Nonnull task) {
         AWSSTSDecodeAuthorizationMessageResponse *result = task.result;
+        NSError *error = task.error;
+
+        if (task.exception) {
+            AWSLogError(@"Fatal exception: [%@]", task.exception);
+            kill(getpid(), SIGKILL);
+        }
+
+        if (completionHandler) {
+            completionHandler(result, error);
+        }
+
+        return nil;
+    }];
+}
+
+- (AWSTask<AWSSTSGetCallerIdentityResponse *> *)getCallerIdentity:(AWSSTSGetCallerIdentityRequest *)request {
+    return [self invokeRequest:request
+                    HTTPMethod:AWSHTTPMethodPOST
+                     URLString:@""
+                  targetPrefix:@""
+                 operationName:@"GetCallerIdentity"
+                   outputClass:[AWSSTSGetCallerIdentityResponse class]];
+}
+
+- (void)getCallerIdentity:(AWSSTSGetCallerIdentityRequest *)request
+     completionHandler:(void (^)(AWSSTSGetCallerIdentityResponse *response, NSError *error))completionHandler {
+    [[self getCallerIdentity:request] continueWithBlock:^id _Nullable(AWSTask<AWSSTSGetCallerIdentityResponse *> * _Nonnull task) {
+        AWSSTSGetCallerIdentityResponse *result = task.result;
         NSError *error = task.error;
 
         if (task.exception) {
@@ -378,7 +418,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)getFederationToken:(AWSSTSGetFederationTokenRequest *)request
-         completionHandler:(void (^)(AWSSTSGetFederationTokenResponse *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSTSGetFederationTokenResponse *response, NSError *error))completionHandler {
     [[self getFederationToken:request] continueWithBlock:^id _Nullable(AWSTask<AWSSTSGetFederationTokenResponse *> * _Nonnull task) {
         AWSSTSGetFederationTokenResponse *result = task.result;
         NSError *error = task.error;
@@ -406,7 +446,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)getSessionToken:(AWSSTSGetSessionTokenRequest *)request
-      completionHandler:(void (^)(AWSSTSGetSessionTokenResponse *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSTSGetSessionTokenResponse *response, NSError *error))completionHandler {
     [[self getSessionToken:request] continueWithBlock:^id _Nullable(AWSTask<AWSSTSGetSessionTokenResponse *> * _Nonnull task) {
         AWSSTSGetSessionTokenResponse *result = task.result;
         NSError *error = task.error;
@@ -415,13 +455,15 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
             AWSLogError(@"Fatal exception: [%@]", task.exception);
             kill(getpid(), SIGKILL);
         }
-        
+
         if (completionHandler) {
             completionHandler(result, error);
         }
-        
+
         return nil;
     }];
 }
+
+#pragma mark -
 
 @end

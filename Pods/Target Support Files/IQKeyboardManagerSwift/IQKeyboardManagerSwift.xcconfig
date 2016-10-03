@@ -4,3 +4,4 @@ OTHER_LDFLAGS = -framework "CoreGraphics" -framework "Foundation" -framework "UI
 OTHER_SWIFT_FLAGS = $(inherited) "-D" "COCOAPODS"
 PODS_ROOT = ${SRCROOT}
 SKIP_INSTALL = YES
+SWIFT_VERSION = 3.0

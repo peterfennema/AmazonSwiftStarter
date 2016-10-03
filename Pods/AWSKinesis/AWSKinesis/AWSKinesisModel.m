@@ -40,6 +40,17 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 
 @end
 
+@implementation AWSKinesisDecreaseStreamRetentionPeriodInput
+
++ (NSDictionary *)JSONKeyPathsByPropertyKey {
+	return @{
+             @"retentionPeriodHours" : @"RetentionPeriodHours",
+             @"streamName" : @"StreamName",
+             };
+}
+
+@end
+
 @implementation AWSKinesisDeleteStreamInput
 
 + (NSDictionary *)JSONKeyPathsByPropertyKey {
@@ -71,7 +82,51 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 }
 
 + (NSValueTransformer *)streamDescriptionJSONTransformer {
-	return [NSValueTransformer awsmtl_JSONDictionaryTransformerWithModelClass:[AWSKinesisStreamDescription class]];
+    return [NSValueTransformer awsmtl_JSONDictionaryTransformerWithModelClass:[AWSKinesisStreamDescription class]];
+}
+
+@end
+
+@implementation AWSKinesisDisableEnhancedMonitoringInput
+
++ (NSDictionary *)JSONKeyPathsByPropertyKey {
+	return @{
+             @"shardLevelMetrics" : @"ShardLevelMetrics",
+             @"streamName" : @"StreamName",
+             };
+}
+
+@end
+
+@implementation AWSKinesisEnableEnhancedMonitoringInput
+
++ (NSDictionary *)JSONKeyPathsByPropertyKey {
+	return @{
+             @"shardLevelMetrics" : @"ShardLevelMetrics",
+             @"streamName" : @"StreamName",
+             };
+}
+
+@end
+
+@implementation AWSKinesisEnhancedMetrics
+
++ (NSDictionary *)JSONKeyPathsByPropertyKey {
+	return @{
+             @"shardLevelMetrics" : @"ShardLevelMetrics",
+             };
+}
+
+@end
+
+@implementation AWSKinesisEnhancedMonitoringOutput
+
++ (NSDictionary *)JSONKeyPathsByPropertyKey {
+	return @{
+             @"currentShardLevelMetrics" : @"CurrentShardLevelMetrics",
+             @"desiredShardLevelMetrics" : @"DesiredShardLevelMetrics",
+             @"streamName" : @"StreamName",
+             };
 }
 
 @end
@@ -91,13 +146,14 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 
 + (NSDictionary *)JSONKeyPathsByPropertyKey {
 	return @{
+             @"millisBehindLatest" : @"MillisBehindLatest",
              @"nextShardIterator" : @"NextShardIterator",
              @"records" : @"Records",
              };
 }
 
 + (NSValueTransformer *)recordsJSONTransformer {
-	return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisRecord class]];
+    return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisRecord class]];
 }
 
 @end
@@ -110,22 +166,26 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
              @"shardIteratorType" : @"ShardIteratorType",
              @"startingSequenceNumber" : @"StartingSequenceNumber",
              @"streamName" : @"StreamName",
+             @"timestamp" : @"Timestamp",
              };
 }
 
 + (NSValueTransformer *)shardIteratorTypeJSONTransformer {
     return [AWSMTLValueTransformer reversibleTransformerWithForwardBlock:^NSNumber *(NSString *value) {
-        if ([value isEqualToString:@"AT_SEQUENCE_NUMBER"]) {
+        if ([value caseInsensitiveCompare:@"AT_SEQUENCE_NUMBER"] == NSOrderedSame) {
             return @(AWSKinesisShardIteratorTypeAtSequenceNumber);
         }
-        if ([value isEqualToString:@"AFTER_SEQUENCE_NUMBER"]) {
+        if ([value caseInsensitiveCompare:@"AFTER_SEQUENCE_NUMBER"] == NSOrderedSame) {
             return @(AWSKinesisShardIteratorTypeAfterSequenceNumber);
         }
-        if ([value isEqualToString:@"TRIM_HORIZON"]) {
+        if ([value caseInsensitiveCompare:@"TRIM_HORIZON"] == NSOrderedSame) {
             return @(AWSKinesisShardIteratorTypeTrimHorizon);
         }
-        if ([value isEqualToString:@"LATEST"]) {
+        if ([value caseInsensitiveCompare:@"LATEST"] == NSOrderedSame) {
             return @(AWSKinesisShardIteratorTypeLatest);
+        }
+        if ([value caseInsensitiveCompare:@"AT_TIMESTAMP"] == NSOrderedSame) {
+            return @(AWSKinesisShardIteratorTypeAtTimestamp);
         }
         return @(AWSKinesisShardIteratorTypeUnknown);
     } reverseBlock:^NSString *(NSNumber *value) {
@@ -138,10 +198,19 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
                 return @"TRIM_HORIZON";
             case AWSKinesisShardIteratorTypeLatest:
                 return @"LATEST";
-            case AWSKinesisShardIteratorTypeUnknown:
+            case AWSKinesisShardIteratorTypeAtTimestamp:
+                return @"AT_TIMESTAMP";
             default:
                 return nil;
         }
+    }];
+}
+
++ (NSValueTransformer *)timestampJSONTransformer {
+    return [AWSMTLValueTransformer reversibleTransformerWithForwardBlock:^id(NSNumber *number) {
+        return [NSDate dateWithTimeIntervalSince1970:[number doubleValue]];
+    } reverseBlock:^id(NSDate *date) {
+        return [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]];
     }];
 }
 
@@ -163,6 +232,17 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 	return @{
              @"endingHashKey" : @"EndingHashKey",
              @"startingHashKey" : @"StartingHashKey",
+             };
+}
+
+@end
+
+@implementation AWSKinesisIncreaseStreamRetentionPeriodInput
+
++ (NSDictionary *)JSONKeyPathsByPropertyKey {
+	return @{
+             @"retentionPeriodHours" : @"RetentionPeriodHours",
+             @"streamName" : @"StreamName",
              };
 }
 
@@ -212,7 +292,7 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 }
 
 + (NSValueTransformer *)tagsJSONTransformer {
-	return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisTag class]];
+    return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisTag class]];
 }
 
 @end
@@ -264,7 +344,7 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 }
 
 + (NSValueTransformer *)recordsJSONTransformer {
-	return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisPutRecordsRequestEntry class]];
+    return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisPutRecordsRequestEntry class]];
 }
 
 @end
@@ -279,7 +359,7 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 }
 
 + (NSValueTransformer *)recordsJSONTransformer {
-	return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisPutRecordsResultEntry class]];
+    return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisPutRecordsResultEntry class]];
 }
 
 @end
@@ -313,10 +393,19 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 
 + (NSDictionary *)JSONKeyPathsByPropertyKey {
 	return @{
+             @"approximateArrivalTimestamp" : @"ApproximateArrivalTimestamp",
              @"data" : @"Data",
              @"partitionKey" : @"PartitionKey",
              @"sequenceNumber" : @"SequenceNumber",
              };
+}
+
++ (NSValueTransformer *)approximateArrivalTimestampJSONTransformer {
+    return [AWSMTLValueTransformer reversibleTransformerWithForwardBlock:^id(NSNumber *number) {
+        return [NSDate dateWithTimeIntervalSince1970:[number doubleValue]];
+    } reverseBlock:^id(NSDate *date) {
+        return [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]];
+    }];
 }
 
 @end
@@ -356,11 +445,11 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 }
 
 + (NSValueTransformer *)hashKeyRangeJSONTransformer {
-	return [NSValueTransformer awsmtl_JSONDictionaryTransformerWithModelClass:[AWSKinesisHashKeyRange class]];
+    return [NSValueTransformer awsmtl_JSONDictionaryTransformerWithModelClass:[AWSKinesisHashKeyRange class]];
 }
 
 + (NSValueTransformer *)sequenceNumberRangeJSONTransformer {
-	return [NSValueTransformer awsmtl_JSONDictionaryTransformerWithModelClass:[AWSKinesisSequenceNumberRange class]];
+    return [NSValueTransformer awsmtl_JSONDictionaryTransformerWithModelClass:[AWSKinesisSequenceNumberRange class]];
 }
 
 @end
@@ -381,7 +470,9 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
 
 + (NSDictionary *)JSONKeyPathsByPropertyKey {
 	return @{
+             @"enhancedMonitoring" : @"EnhancedMonitoring",
              @"hasMoreShards" : @"HasMoreShards",
+             @"retentionPeriodHours" : @"RetentionPeriodHours",
              @"shards" : @"Shards",
              @"streamARN" : @"StreamARN",
              @"streamName" : @"StreamName",
@@ -389,22 +480,26 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
              };
 }
 
++ (NSValueTransformer *)enhancedMonitoringJSONTransformer {
+    return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisEnhancedMetrics class]];
+}
+
 + (NSValueTransformer *)shardsJSONTransformer {
-	return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisShard class]];
+    return [NSValueTransformer awsmtl_JSONArrayTransformerWithModelClass:[AWSKinesisShard class]];
 }
 
 + (NSValueTransformer *)streamStatusJSONTransformer {
     return [AWSMTLValueTransformer reversibleTransformerWithForwardBlock:^NSNumber *(NSString *value) {
-        if ([value isEqualToString:@"CREATING"]) {
+        if ([value caseInsensitiveCompare:@"CREATING"] == NSOrderedSame) {
             return @(AWSKinesisStreamStatusCreating);
         }
-        if ([value isEqualToString:@"DELETING"]) {
+        if ([value caseInsensitiveCompare:@"DELETING"] == NSOrderedSame) {
             return @(AWSKinesisStreamStatusDeleting);
         }
-        if ([value isEqualToString:@"ACTIVE"]) {
+        if ([value caseInsensitiveCompare:@"ACTIVE"] == NSOrderedSame) {
             return @(AWSKinesisStreamStatusActive);
         }
-        if ([value isEqualToString:@"UPDATING"]) {
+        if ([value caseInsensitiveCompare:@"UPDATING"] == NSOrderedSame) {
             return @(AWSKinesisStreamStatusUpdating);
         }
         return @(AWSKinesisStreamStatusUnknown);
@@ -418,7 +513,6 @@ NSString *const AWSKinesisErrorDomain = @"com.amazonaws.AWSKinesisErrorDomain";
                 return @"ACTIVE";
             case AWSKinesisStreamStatusUpdating:
                 return @"UPDATING";
-            case AWSKinesisStreamStatusUnknown:
             default:
                 return nil;
         }

@@ -13,18 +13,21 @@
 // permissions and limitations under the License.
 //
 
-#import "AWSSQS.h"
-
-#import "AWSNetworking.h"
-#import "AWSCategory.h"
-#import "AWSSignature.h"
-#import "AWSService.h"
-#import "AWSNetworking.h"
-#import "AWSURLRequestSerialization.h"
-#import "AWSURLResponseSerialization.h"
-#import "AWSURLRequestRetryHandler.h"
-#import "AWSSynchronizedMutableDictionary.h"
+#import "AWSSQSService.h"
+#import <AWSCore/AWSNetworking.h>
+#import <AWSCore/AWSCategory.h>
+#import <AWSCore/AWSNetworking.h>
+#import <AWSCore/AWSSignature.h>
+#import <AWSCore/AWSService.h>
+#import <AWSCore/AWSURLRequestSerialization.h>
+#import <AWSCore/AWSURLResponseSerialization.h>
+#import <AWSCore/AWSURLRequestRetryHandler.h>
+#import <AWSCore/AWSSynchronizedMutableDictionary.h>
 #import "AWSSQSResources.h"
+
+static NSString *const AWSInfoSQS = @"SQS";
+static NSString *const AWSSQSSDKVersion = @"2.4.9";
+
 
 @interface AWSSQSResponseSerializer : AWSXMLResponseSerializer
 
@@ -37,9 +40,6 @@
 static NSDictionary *errorCodeDictionary = nil;
 + (void)initialize {
     errorCodeDictionary = @{
-                            @"IncompleteSignature" : @(AWSSQSErrorIncompleteSignature),
-                            @"InvalidClientTokenId" : @(AWSSQSErrorInvalidClientTokenId),
-                            @"MissingAuthenticationToken" : @(AWSSQSErrorMissingAuthenticationToken),
                             @"AWS.SimpleQueueService.BatchEntryIdsNotDistinct" : @(AWSSQSErrorBatchEntryIdsNotDistinct),
                             @"AWS.SimpleQueueService.BatchRequestTooLong" : @(AWSSQSErrorBatchRequestTooLong),
                             @"AWS.SimpleQueueService.EmptyBatchRequest" : @(AWSSQSErrorEmptyBatchRequest),
@@ -49,6 +49,7 @@ static NSDictionary *errorCodeDictionary = nil;
                             @"InvalidMessageContents" : @(AWSSQSErrorInvalidMessageContents),
                             @"AWS.SimpleQueueService.MessageNotInflight" : @(AWSSQSErrorMessageNotInflight),
                             @"OverLimit" : @(AWSSQSErrorOverLimit),
+                            @"AWS.SimpleQueueService.PurgeQueueInProgress" : @(AWSSQSErrorPurgeQueueInProgress),
                             @"AWS.SimpleQueueService.QueueDeletedRecently" : @(AWSSQSErrorQueueDeletedRecently),
                             @"AWS.SimpleQueueService.NonExistentQueue" : @(AWSSQSErrorQueueDoesNotExist),
                             @"QueueAlreadyExists" : @(AWSSQSErrorQueueNameExists),
@@ -71,33 +72,39 @@ static NSDictionary *errorCodeDictionary = nil;
                                                     data:data
                                                    error:error];
     if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
+    	if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
+	        if ([errorCodeDictionary objectForKey:[[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]]) {
+	            if (error) {
+	                *error = [NSError errorWithDomain:AWSSQSErrorDomain
+	                                             code:[[errorCodeDictionary objectForKey:[[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]] integerValue]
+	                                         userInfo:responseObject];
+	            }
+	            return responseObject;
+	        } else if ([[[responseObject objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]) {
+	            if (error) {
+	                *error = [NSError errorWithDomain:AWSCognitoIdentityErrorDomain
+	                                             code:AWSCognitoIdentityErrorUnknown
+	                                         userInfo:responseObject];
+	            }
+	            return responseObject;
+	        }
+    	}
+    }
 
-        NSDictionary *errorInfo = responseObject[@"Error"];
-        if (errorInfo[@"Code"] && errorCodeDictionary[errorInfo[@"Code"]]) {
-            if (error) {
-                *error = [NSError errorWithDomain:AWSSQSErrorDomain
-                                             code:[errorCodeDictionary[errorInfo[@"Code"]] integerValue]
-                                         userInfo:errorInfo
-                          ];
-                return responseObject;
-            }
-        } else if (errorInfo) {
-            if (error) {
-                *error = [NSError errorWithDomain:AWSSQSErrorDomain
-                                             code:AWSSQSErrorUnknown
-                                         userInfo:errorInfo];
-                return responseObject;
-            }
-        }
+    if (!*error && response.statusCode/100 != 2) {
+        *error = [NSError errorWithDomain:AWSSQSErrorDomain
+                                     code:AWSSQSErrorUnknown
+                                 userInfo:nil];
+    }
 
+    if (!*error && [responseObject isKindOfClass:[NSDictionary class]]) {
         if (self.outputClass) {
             responseObject = [AWSMTLJSONAdapter modelOfClass:self.outputClass
                                           fromJSONDictionary:responseObject
                                                        error:error];
         }
     }
-
-    return responseObject;
+	    return responseObject;
 }
 
 @end
@@ -107,42 +114,6 @@ static NSDictionary *errorCodeDictionary = nil;
 @end
 
 @implementation AWSSQSRequestRetryHandler
-
-- (AWSNetworkingRetryType)shouldRetry:(uint32_t)currentRetryCount
-                             response:(NSHTTPURLResponse *)response
-                                 data:(NSData *)data
-                                error:(NSError *)error {
-    AWSNetworkingRetryType retryType = [super shouldRetry:currentRetryCount
-                                                 response:response
-                                                     data:data
-                                                    error:error];
-    if(retryType == AWSNetworkingRetryTypeShouldNotRetry
-       && currentRetryCount < self.maxRetryCount) {
-        if ([error.domain isEqualToString:AWSSQSErrorDomain]) {
-            switch (error.code) {
-                case AWSSQSErrorIncompleteSignature:
-                case AWSSQSErrorInvalidClientTokenId:
-                case AWSSQSErrorMissingAuthenticationToken:
-                    retryType = AWSNetworkingRetryTypeShouldRefreshCredentialsAndRetry;
-                    break;
-
-                default:
-                    break;
-            }
-        } else if ([error.domain isEqualToString:AWSGeneralErrorDomain]) {
-            switch (error.code) {
-                case AWSGeneralErrorSignatureDoesNotMatch:
-                    retryType = AWSNetworkingRetryTypeShouldCorrectClockSkewAndRetry;
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-
-    return retryType;
-}
 
 @end
 
@@ -165,24 +136,49 @@ static NSDictionary *errorCodeDictionary = nil;
 
 @end
 
+@interface AWSEndpoint()
+
+- (void) setRegion:(AWSRegionType)regionType service:(AWSServiceType)serviceType;
+
+@end
+
 @implementation AWSSQS
+
++ (void)initialize {
+    [super initialize];
+
+    if (![AWSiOSSDKVersion isEqualToString:AWSSQSSDKVersion]) {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                       reason:[NSString stringWithFormat:@"AWSCore and AWSSQS versions need to match. Check your SDK installation. AWSCore: %@ AWSSQS: %@", AWSiOSSDKVersion, AWSSQSSDKVersion]
+                                     userInfo:nil];
+    }
+}
+
+#pragma mark - Setup
 
 static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 
 + (instancetype)defaultSQS {
-    if (![AWSServiceManager defaultServiceManager].defaultServiceConfiguration) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"`defaultServiceConfiguration` is `nil`. You need to set it before using this method."
-                                     userInfo:nil];
-    }
-
     static AWSSQS *_defaultSQS = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        _defaultSQS = [[AWSSQS alloc] initWithConfiguration:AWSServiceManager.defaultServiceManager.defaultServiceConfiguration];
-#pragma clang diagnostic pop
+        AWSServiceConfiguration *serviceConfiguration = nil;
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] defaultServiceInfo:AWSInfoSQS];
+        if (serviceInfo) {
+            serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                               credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+        }
+
+        if (!serviceConfiguration) {
+            serviceConfiguration = [AWSServiceManager defaultServiceManager].defaultServiceConfiguration;
+        }
+
+        if (!serviceConfiguration) {
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                           reason:@"The service configuration is `nil`. You need to configure `Info.plist` or set `defaultServiceConfiguration` before using this method."
+                                         userInfo:nil];
+        }
+        _defaultSQS = [[AWSSQS alloc] initWithConfiguration:serviceConfiguration];
     });
 
     return _defaultSQS;
@@ -193,15 +189,28 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     dispatch_once(&onceToken, ^{
         _serviceClients = [AWSSynchronizedMutableDictionary new];
     });
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [_serviceClients setObject:[[AWSSQS alloc] initWithConfiguration:configuration]
                         forKey:key];
-#pragma clang diagnostic pop
 }
 
 + (instancetype)SQSForKey:(NSString *)key {
-    return [_serviceClients objectForKey:key];
+    @synchronized(self) {
+        AWSSQS *serviceClient = [_serviceClients objectForKey:key];
+        if (serviceClient) {
+            return serviceClient;
+        }
+
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] serviceInfo:AWSInfoSQS
+                                                                     forKey:key];
+        if (serviceInfo) {
+            AWSServiceConfiguration *serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                                                        credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+            [AWSSQS registerSQSWithConfiguration:serviceConfiguration
+                                                                forKey:key];
+        }
+
+        return [_serviceClients objectForKey:key];
+    }
 }
 
 + (void)removeSQSForKey:(NSString *)key {
@@ -215,14 +224,21 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     return nil;
 }
 
+#pragma mark -
+
 - (instancetype)initWithConfiguration:(AWSServiceConfiguration *)configuration {
     if (self = [super init]) {
         _configuration = [configuration copy];
-
-        _configuration.endpoint = [[AWSEndpoint alloc] initWithRegion:_configuration.regionType
+       	
+        if(!configuration.endpoint){
+            _configuration.endpoint = [[AWSEndpoint alloc] initWithRegion:_configuration.regionType
                                                               service:AWSServiceSQS
                                                          useUnsafeURL:NO];
-
+        }else{
+            [_configuration.endpoint setRegion:_configuration.regionType
+                                      service:AWSServiceSQS];
+        }
+       	
         AWSSignatureV4Signer *signer = [[AWSSignatureV4Signer alloc] initWithCredentialsProvider:_configuration.credentialsProvider
                                                                                         endpoint:_configuration.endpoint];
         AWSNetworkingRequestInterceptor *baseInterceptor = [[AWSNetworkingRequestInterceptor alloc] initWithUserAgent:_configuration.userAgent];
@@ -230,7 +246,8 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 
         _configuration.baseURL = _configuration.endpoint.URL;
         _configuration.retryHandler = [[AWSSQSRequestRetryHandler alloc] initWithMaximumRetryCount:_configuration.maxRetryCount];
-
+         
+		
         _networking = [[AWSNetworking alloc] initWithConfiguration:_configuration];
     }
     
@@ -248,19 +265,21 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
         if (!request) {
             request = [AWSRequest new];
         }
-        
+
         AWSNetworkingRequest *networkingRequest = request.internalRequest;
         if (request) {
             networkingRequest.parameters = [[AWSMTLJSONAdapter JSONDictionaryFromModel:request] aws_removeNullValues];
         } else {
             networkingRequest.parameters = @{};
         }
+
         networkingRequest.HTTPMethod = HTTPMethod;
         networkingRequest.requestSerializer = [[AWSQueryStringRequestSerializer alloc] initWithJSONDefinition:[[AWSSQSResources sharedInstance] JSONObject]
                                                                                                    actionName:operationName];
         networkingRequest.responseSerializer = [[AWSSQSResponseSerializer alloc] initWithJSONDefinition:[[AWSSQSResources sharedInstance] JSONObject]
                                                                                              actionName:operationName
                                                                                             outputClass:outputClass];
+        
         return [self.networking sendRequest:networkingRequest];
     }
 }
@@ -277,7 +296,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)addPermission:(AWSSQSAddPermissionRequest *)request
-    completionHandler:(void (^)(NSError *error))completionHandler {
+     completionHandler:(void (^)(NSError *error))completionHandler {
     [[self addPermission:request] continueWithBlock:^id _Nullable(AWSTask * _Nonnull task) {
         NSError *error = task.error;
 
@@ -304,7 +323,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)changeMessageVisibility:(AWSSQSChangeMessageVisibilityRequest *)request
-              completionHandler:(void (^)(NSError *error))completionHandler {
+     completionHandler:(void (^)(NSError *error))completionHandler {
     [[self changeMessageVisibility:request] continueWithBlock:^id _Nullable(AWSTask * _Nonnull task) {
         NSError *error = task.error;
 
@@ -331,7 +350,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)changeMessageVisibilityBatch:(AWSSQSChangeMessageVisibilityBatchRequest *)request
-                   completionHandler:(void (^)(AWSSQSChangeMessageVisibilityBatchResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSChangeMessageVisibilityBatchResult *response, NSError *error))completionHandler {
     [[self changeMessageVisibilityBatch:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSChangeMessageVisibilityBatchResult *> * _Nonnull task) {
         AWSSQSChangeMessageVisibilityBatchResult *result = task.result;
         NSError *error = task.error;
@@ -359,7 +378,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)createQueue:(AWSSQSCreateQueueRequest *)request
-  completionHandler:(void (^)(AWSSQSCreateQueueResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSCreateQueueResult *response, NSError *error))completionHandler {
     [[self createQueue:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSCreateQueueResult *> * _Nonnull task) {
         AWSSQSCreateQueueResult *result = task.result;
         NSError *error = task.error;
@@ -387,7 +406,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)deleteMessage:(AWSSQSDeleteMessageRequest *)request
-    completionHandler:(void (^)(NSError *error))completionHandler {
+     completionHandler:(void (^)(NSError *error))completionHandler {
     [[self deleteMessage:request] continueWithBlock:^id _Nullable(AWSTask * _Nonnull task) {
         NSError *error = task.error;
 
@@ -414,7 +433,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)deleteMessageBatch:(AWSSQSDeleteMessageBatchRequest *)request
-         completionHandler:(void (^)(AWSSQSDeleteMessageBatchResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSDeleteMessageBatchResult *response, NSError *error))completionHandler {
     [[self deleteMessageBatch:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSDeleteMessageBatchResult *> * _Nonnull task) {
         AWSSQSDeleteMessageBatchResult *result = task.result;
         NSError *error = task.error;
@@ -442,7 +461,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)deleteQueue:(AWSSQSDeleteQueueRequest *)request
-  completionHandler:(void (^)(NSError *error))completionHandler {
+     completionHandler:(void (^)(NSError *error))completionHandler {
     [[self deleteQueue:request] continueWithBlock:^id _Nullable(AWSTask * _Nonnull task) {
         NSError *error = task.error;
 
@@ -469,7 +488,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)getQueueAttributes:(AWSSQSGetQueueAttributesRequest *)request
-         completionHandler:(void (^)(AWSSQSGetQueueAttributesResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSGetQueueAttributesResult *response, NSError *error))completionHandler {
     [[self getQueueAttributes:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSGetQueueAttributesResult *> * _Nonnull task) {
         AWSSQSGetQueueAttributesResult *result = task.result;
         NSError *error = task.error;
@@ -497,7 +516,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)getQueueUrl:(AWSSQSGetQueueUrlRequest *)request
-  completionHandler:(void (^)(AWSSQSGetQueueUrlResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSGetQueueUrlResult *response, NSError *error))completionHandler {
     [[self getQueueUrl:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSGetQueueUrlResult *> * _Nonnull task) {
         AWSSQSGetQueueUrlResult *result = task.result;
         NSError *error = task.error;
@@ -525,7 +544,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)listDeadLetterSourceQueues:(AWSSQSListDeadLetterSourceQueuesRequest *)request
-                 completionHandler:(void (^)(AWSSQSListDeadLetterSourceQueuesResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSListDeadLetterSourceQueuesResult *response, NSError *error))completionHandler {
     [[self listDeadLetterSourceQueues:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSListDeadLetterSourceQueuesResult *> * _Nonnull task) {
         AWSSQSListDeadLetterSourceQueuesResult *result = task.result;
         NSError *error = task.error;
@@ -553,7 +572,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)listQueues:(AWSSQSListQueuesRequest *)request
- completionHandler:(void (^)(AWSSQSListQueuesResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSListQueuesResult *response, NSError *error))completionHandler {
     [[self listQueues:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSListQueuesResult *> * _Nonnull task) {
         AWSSQSListQueuesResult *result = task.result;
         NSError *error = task.error;
@@ -565,6 +584,33 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 
         if (completionHandler) {
             completionHandler(result, error);
+        }
+
+        return nil;
+    }];
+}
+
+- (AWSTask *)purgeQueue:(AWSSQSPurgeQueueRequest *)request {
+    return [self invokeRequest:request
+                    HTTPMethod:AWSHTTPMethodPOST
+                     URLString:@""
+                  targetPrefix:@""
+                 operationName:@"PurgeQueue"
+                   outputClass:nil];
+}
+
+- (void)purgeQueue:(AWSSQSPurgeQueueRequest *)request
+     completionHandler:(void (^)(NSError *error))completionHandler {
+    [[self purgeQueue:request] continueWithBlock:^id _Nullable(AWSTask * _Nonnull task) {
+        NSError *error = task.error;
+
+        if (task.exception) {
+            AWSLogError(@"Fatal exception: [%@]", task.exception);
+            kill(getpid(), SIGKILL);
+        }
+
+        if (completionHandler) {
+            completionHandler(error);
         }
 
         return nil;
@@ -609,7 +655,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)removePermission:(AWSSQSRemovePermissionRequest *)request
-       completionHandler:(void (^)(NSError *error))completionHandler {
+     completionHandler:(void (^)(NSError *error))completionHandler {
     [[self removePermission:request] continueWithBlock:^id _Nullable(AWSTask * _Nonnull task) {
         NSError *error = task.error;
 
@@ -636,7 +682,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)sendMessage:(AWSSQSSendMessageRequest *)request
-  completionHandler:(void (^)(AWSSQSSendMessageResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSSendMessageResult *response, NSError *error))completionHandler {
     [[self sendMessage:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSSendMessageResult *> * _Nonnull task) {
         AWSSQSSendMessageResult *result = task.result;
         NSError *error = task.error;
@@ -664,7 +710,7 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)sendMessageBatch:(AWSSQSSendMessageBatchRequest *)request
-       completionHandler:(void (^)(AWSSQSSendMessageBatchResult *response, NSError *error))completionHandler {
+     completionHandler:(void (^)(AWSSQSSendMessageBatchResult *response, NSError *error))completionHandler {
     [[self sendMessageBatch:request] continueWithBlock:^id _Nullable(AWSTask<AWSSQSSendMessageBatchResult *> * _Nonnull task) {
         AWSSQSSendMessageBatchResult *result = task.result;
         NSError *error = task.error;
@@ -692,21 +738,23 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 - (void)setQueueAttributes:(AWSSQSSetQueueAttributesRequest *)request
-         completionHandler:(void (^)(NSError *error))completionHandler {
+     completionHandler:(void (^)(NSError *error))completionHandler {
     [[self setQueueAttributes:request] continueWithBlock:^id _Nullable(AWSTask * _Nonnull task) {
         NSError *error = task.error;
-        
+
         if (task.exception) {
             AWSLogError(@"Fatal exception: [%@]", task.exception);
             kill(getpid(), SIGKILL);
         }
-        
+
         if (completionHandler) {
             completionHandler(error);
         }
-        
+
         return nil;
     }];
 }
+
+#pragma mark -
 
 @end

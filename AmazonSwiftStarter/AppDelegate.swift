@@ -14,8 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        window!.backgroundColor = UIColor.whiteColor()
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        window!.backgroundColor = UIColor.white
         
         IQKeyboardManager.sharedManager().enable = true
         
@@ -24,19 +24,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
     }
 
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
     }
 
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
     }
 
 
@@ -46,13 +46,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: WelcomeViewControllerDelegate {
     
-    func welcomeViewControllerDidFinish(controller: WelcomeViewController) {
+    func welcomeViewControllerDidFinish(_ controller: WelcomeViewController) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let tabBarVC = storyBoard.instantiateViewControllerWithIdentifier("tabBarController") as! UITabBarController
+        let tabBarVC = storyBoard.instantiateViewController(withIdentifier: "tabBarController") as! UITabBarController
         self.window!.rootViewController = tabBarVC
-        UIView.transitionWithView(window!,
+        UIView.transition(with: window!,
             duration: 0.5,
-            options: .TransitionCrossDissolve,
+            options: .transitionCrossDissolve,
             animations: { () -> Void in
                 self.window!.rootViewController = tabBarVC
             },
