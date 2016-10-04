@@ -16,7 +16,7 @@ Example of a clean separation between the backend logic and the other code of th
 ### Version 1.0 
 
 Xcode 7
-Swift 2.1
+Swift 2.2
 
 ### Version 1.1
 
