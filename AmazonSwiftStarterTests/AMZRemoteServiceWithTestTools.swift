@@ -11,7 +11,7 @@ import Foundation
 
 class AMZRemoteServiceWithTestTools: AMZRemoteService, RemoteServiceWithTestTools {
     
-    private static var sharedInstance: AMZRemoteServiceWithTestTools?
+    fileprivate static var sharedInstance: AMZRemoteServiceWithTestTools?
     
     static func defaultService() -> RemoteServiceWithTestTools {
         if sharedInstance == nil {

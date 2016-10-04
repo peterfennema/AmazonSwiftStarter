@@ -59,7 +59,7 @@
 - (instancetype)initWithJSONDefinition:(NSDictionary *)JSONDefinition
                             actionName:(NSString *)actionName {
     if (self = [super init]) {
-        
+
         _serviceDefinitionJSON = JSONDefinition;
         if (_serviceDefinitionJSON == nil) {
             AWSLogError(@"serviceDefinitionJSON of is nil.");
@@ -72,8 +72,8 @@
 }
 
 - (AWSTask *)serializeRequest:(NSMutableURLRequest *)request
-                     headers:(NSDictionary *)headers
-                  parameters:(NSDictionary *)parameters {
+                      headers:(NSDictionary *)headers
+                   parameters:(NSDictionary *)parameters {
     request.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
 
     //If parameters contains clientContext key, move it to http header. This is a sepcial case
@@ -90,12 +90,12 @@
     NSDictionary *actionRules = [[self.serviceDefinitionJSON objectForKey:@"operations"] objectForKey:self.actionName];
     NSDictionary *shapeRules = [self.serviceDefinitionJSON objectForKey:@"shapes"];
     AWSJSONDictionary *inputRules = [[AWSJSONDictionary alloc] initWithDictionary:[actionRules objectForKey:@"input"] JSONDefinitionRule:shapeRules];
-    
+
     NSDictionary *actionHTTPRule = [actionRules objectForKey:@"http"];
     NSString *ruleURIStr = [actionHTTPRule objectForKey:@"requestUri"];
-    
+
     NSError *error = nil;
-    
+
     [AWSXMLRequestSerializer constructURIandHeadersAndBody:request
                                                      rules:inputRules
                                                 parameters:parameters
@@ -104,7 +104,7 @@
     if (error) {
         return [AWSTask taskWithError:error];
     }
-    
+
     //construct HTTPBody only if HTTPBodyStream is nil
     if (!request.HTTPBodyStream) {
         NSData *bodyData = [AWSJSONBuilder jsonDataForDictionary:parameters actionName:self.actionName serviceDefinitionRule:self.serviceDefinitionJSON error:&error];
@@ -120,7 +120,7 @@
 
     [request aws_validateHTTPMethodAndBody];
 
-    AWSLogVerbose(@"Request body: [%@]", [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding]);
+
 
     if (!error) {
         for (NSString *key in headers) {
@@ -152,7 +152,7 @@
 - (instancetype)initWithJSONDefinition:(NSDictionary *)JSONDefinition
                             actionName:(NSString *)actionName {
     if (self = [super init]) {
-        
+
         _serviceDefinitionJSON = JSONDefinition;
         if (_serviceDefinitionJSON == nil) {
             AWSLogError(@"serviceDefinitionJSON of is nil.");
@@ -166,8 +166,8 @@
 
 /* need to overwrite this method to do serialization for self.parameter */
 - (AWSTask *)serializeRequest:(NSMutableURLRequest *)request
-                     headers:(NSDictionary *)headers
-                  parameters:(NSDictionary *)parameters {
+                      headers:(NSDictionary *)headers
+                   parameters:(NSDictionary *)parameters {
     request.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
 
     NSDictionary *anActionRules = [[self.serviceDefinitionJSON objectForKey:@"operations"] objectForKey:self.actionName];
@@ -199,7 +199,6 @@
                                              serviceDefinitionRule:self.serviceDefinitionJSON
                                                              error:&error];
         }
-        AWSLogVerbose(@"Request body: [%@]", [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding]);
 
         //contruct additional headers
         if (!error) {
@@ -262,7 +261,7 @@
                 if ([value isKindOfClass:[NSNumber class]]) {
                     valueStr = [value stringValue];
                 }
-                
+
             } else if ([rulesType isEqualToString:@"boolean"]) {
                 if ([value isKindOfClass:[NSNumber class]]) {
                     valueStr = [value boolValue]?@"true":@"false";
@@ -280,7 +279,7 @@
                     } else {
                         valueStr = [value stringValue];
                     }
-                    
+
                 } else if ([value isKindOfClass:[NSString class]]) {
                     valueStr = value; //timestamp will be treated as string here.
                 }
@@ -431,7 +430,6 @@
 - (instancetype)initWithJSONDefinition:(NSDictionary *)JSONDefinition
                             actionName:(NSString *)actionName {
     if (self = [super init]) {
-        
         _serviceDefinitionJSON = JSONDefinition;
         if (_serviceDefinitionJSON == nil) {
             AWSLogError(@"serviceDefinitionJSON of is nil.");
@@ -477,8 +475,8 @@
 }
 
 - (AWSTask *)serializeRequest:(NSMutableURLRequest *)request
-                     headers:(NSDictionary *)headers
-                  parameters:(NSDictionary *)parameters {
+                      headers:(NSDictionary *)headers
+                   parameters:(NSDictionary *)parameters {
     request.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
 
     parameters = [parameters mutableCopy];
@@ -501,8 +499,7 @@
     if ([queryString length] > 0) {
         request.HTTPBody = [queryString dataUsingEncoding:NSUTF8StringEncoding];
     }
-    AWSLogVerbose(@"Request body: [%@]", [[NSString alloc] initWithData:request.HTTPBody
-                                                               encoding:NSUTF8StringEncoding]);
+
     //contruct additional headers
     if (headers) {
         //generate HTTP header here
@@ -522,56 +519,6 @@
 }
 
 - (AWSTask *)validateRequest:(NSURLRequest *)request {
-    return [AWSTask taskWithResult:nil];
-}
-
-@end
-
-@implementation AWSEC2RequestSerializer
-
-//overwrite serializeRequest method for EC2
-- (AWSTask *)serializeRequest:(NSMutableURLRequest *)request
-                     headers:(NSDictionary *)headers
-                  parameters:(NSDictionary *)parameters {
-    request.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-
-    parameters = [parameters mutableCopy];
-    [self.additionalParameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [parameters setValue:obj forKey:key];
-    }];
-
-    //Need to add version and actionName
-    NSError *error = nil;
-    NSDictionary *formattedParams = [AWSEC2ParamBuilder buildFormattedParams:parameters
-                                                                  actionName:self.actionName
-                                                       serviceDefinitionRule:self.serviceDefinitionJSON error:&error];
-    if (error) {
-        return [AWSTask taskWithError:error];
-    }
-
-    NSMutableString *queryString = [NSMutableString new];
-    [self processParameters:formattedParams queryString:queryString];
-
-    if ([queryString length] > 0) {
-        request.HTTPBody = [queryString dataUsingEncoding:NSUTF8StringEncoding];
-    }
-    AWSLogVerbose(@"Request body: [%@]", [[NSString alloc] initWithData:request.HTTPBody
-                                                               encoding:NSUTF8StringEncoding]);
-    //contruct additional headers
-    if (headers) {
-        //generate HTTP header here
-        for (NSString *key in headers.allKeys) {
-            [request setValue:[headers objectForKey:key] forHTTPHeaderField:key];
-        }
-    }
-    
-    if (!request.allHTTPHeaderFields[@"Content-Type"]) {
-        [request addValue:@"application/x-www-form-urlencoded; charset=utf-8"
-       forHTTPHeaderField:@"Content-Type"];
-    }
-
-    [request aws_validateHTTPMethodAndBody];
-    
     return [AWSTask taskWithResult:nil];
 }
 

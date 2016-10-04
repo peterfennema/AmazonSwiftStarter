@@ -14,30 +14,30 @@ protocol UserData {
     
     var name: String?  {get set}
     
-    var imageData: NSData? {get set}
+    var imageData: Data? {get set}
     
 }
 
 extension UserData  {
     
-    func isEqualTo(other: UserData) -> Bool {
+    func isEqualTo(_ other: UserData) -> Bool {
         return isDataEqualTo(other) && isImageDataEqualTo(other.imageData)
     }
     
-    func isDataEqualTo(otherData: UserData) -> Bool {
+    func isDataEqualTo(_ otherData: UserData) -> Bool {
         let dataEqual = self.userId == otherData.userId &&
             self.name == otherData.name
         return dataEqual
     }
     
-    func isImageDataEqualTo(otherImageData: NSData?) -> Bool {
+    func isImageDataEqualTo(_ otherImageData: Data?) -> Bool {
         let imagesEqual = self.imageData == otherImageData ||
-            (self.imageData != nil && otherImageData != nil && self.imageData!.isEqualToData(otherImageData!))
+            (self.imageData != nil && otherImageData != nil && (self.imageData! == otherImageData!))
         return imagesEqual
     }
     
     
-    mutating func updateWithData(other: UserData) {
+    mutating func updateWithData(_ other: UserData) {
         
         if self.userId != other.userId {
             self.userId = other.userId
@@ -60,6 +60,6 @@ struct UserDataValue: UserData {
     
     var name: String?
     
-    var imageData: NSData? 
+    var imageData: Data? 
     
 }

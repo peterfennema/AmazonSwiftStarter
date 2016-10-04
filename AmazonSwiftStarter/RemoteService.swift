@@ -8,8 +8,8 @@
 
 import Foundation
 
-typealias UserDataResultBlock = (userData: UserData?, error: NSError?) -> Void
-typealias ErrorResultBlock = (error: NSError?) -> Void
+typealias UserDataResultBlock = (_ userData: UserData?, _ error: NSError?) -> Void
+typealias ErrorResultBlock = (_ error: NSError?) -> Void
 
 protocol RemoteService {
     
@@ -17,11 +17,11 @@ protocol RemoteService {
     
     var currentUser: UserData? {get}
     
-    func createCurrentUser(userData: UserData? , completion: ErrorResultBlock)
+    func createCurrentUser(_ userData: UserData? , completion: @escaping ErrorResultBlock)
     
-    func updateCurrentUser(userData: UserData, completion: ErrorResultBlock)
+    func updateCurrentUser(_ userData: UserData, completion: @escaping ErrorResultBlock)
     
-    func fetchCurrentUser(completion: UserDataResultBlock )
+    func fetchCurrentUser(_ completion: @escaping UserDataResultBlock )
     
 }
 

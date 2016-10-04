@@ -10,19 +10,19 @@ import UIKit
 
 class ButtonWithActivityIndicator: UIButton {
 
-    private (set) var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+    fileprivate (set) var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
     
     var buttonTitleText = "" {
         didSet {
-            setTitle(buttonTitleText, forState: UIControlState.Normal)
-            self.titleLabel?.hidden = false
+            setTitle(buttonTitleText, for: UIControlState())
+            self.titleLabel?.isHidden = false
         }
     }
     
     var showTitleTextAfterAnimation = true
     
     init() {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         configure()
     }
     
@@ -32,36 +32,36 @@ class ButtonWithActivityIndicator: UIButton {
         configure()
     }
     
-    private func configure() {
+    fileprivate func configure() {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.hidden = true
+        activityIndicator.isHidden = true
         buttonTitleText = titleLabel?.text ?? ""
         self.addSubview(activityIndicator)
         addLayoutConstraints()
     }
     
-    private func addLayoutConstraints() {
-        let cWidth = NSLayoutConstraint(item: activityIndicator, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
-        let cHeight = NSLayoutConstraint(item: activityIndicator, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
+    fileprivate func addLayoutConstraints() {
+        let cWidth = NSLayoutConstraint(item: activityIndicator, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 20)
+        let cHeight = NSLayoutConstraint(item: activityIndicator, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 20)
         activityIndicator.addConstraints([cWidth, cHeight])
-        let cCenterX = NSLayoutConstraint(item: activityIndicator, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
-        let cCenterY = NSLayoutConstraint(item: activityIndicator, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
+        let cCenterX = NSLayoutConstraint(item: activityIndicator, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0)
+        let cCenterY = NSLayoutConstraint(item: activityIndicator, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0)
         self.addConstraints([cCenterX, cCenterY])
     }
     
     func startAnimating() {
         titleLabel?.text = "" // prevents flashing text after activityIndicator animation
-        setTitle("", forState: UIControlState.Normal)
-        activityIndicator.hidden = false
+        setTitle("", for: UIControlState())
+        activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
 
     func stopAnimating() {
         if showTitleTextAfterAnimation {
-            setTitle(buttonTitleText, forState: UIControlState.Normal)
+            setTitle(buttonTitleText, for: UIControlState())
         }
         activityIndicator.stopAnimating()
-        activityIndicator.hidden = true
+        activityIndicator.isHidden = true
     }
     
 }

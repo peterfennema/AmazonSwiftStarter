@@ -16,7 +16,7 @@ class AMZUser: AWSDynamoDBObjectModel ,AWSDynamoDBModeling, UserData {
     var name: String?
     
     // This attribute is not stored in dynamoDB, see ignoreAttributes(). We will store the image in S3.
-    var imageData: NSData?
+    var imageData: Data?
     
     // I discovered that when you try to save an item to DynamoDB with only a primary key and without any other attribute the item is not saved.
     // I think this is a bug. As an ugly workaround I have added this property :(
@@ -28,17 +28,17 @@ class AMZUser: AWSDynamoDBObjectModel ,AWSDynamoDBModeling, UserData {
         self.userId = userId
     }
 
-    static func dynamoDBTableName() -> String! {
+    static func dynamoDBTableName() -> String {
         return AMZConstants.DYNAMODB_USERS_TABLE
     }
     
     // This is the primary key that you configured while setting up the DynamoDB service.
-    static func hashKeyAttribute() -> String! {
+    static func hashKeyAttribute() -> String {
         return "userId"
     }
     
     // not stored in dynamoDB
-    static func ignoreAttributes() -> [AnyObject]! {
+    static func ignoreAttributes() -> [String] {
         return ["imageData"]
     }
 

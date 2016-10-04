@@ -13,14 +13,14 @@ class RemoteServiceTest: XCTestCase {
     
     let service = RemoteServiceWithTestToolsFactory.getDefaultService()
     
-    var testBundle: NSBundle!
+    var testBundle: Bundle!
 
 
     override func setUp() {
         super.setUp()
         service.removeCurrentUser()
         if testBundle == nil {
-            testBundle = NSBundle(forClass: RemoteServiceTest.self)
+            testBundle = Bundle(for: RemoteServiceTest.self)
         }
     }
     
@@ -41,7 +41,7 @@ class RemoteServiceTest: XCTestCase {
         // when
         // this user is created as current user on the server
         
-        let exp = expectationWithDescription("testThatCreateCurrenUserWithNameCausesNoError")
+        let exp = expectation(description: "testThatCreateCurrenUserWithNameCausesNoError")
         service.createCurrentUser(user) { (error) -> Void in
             
             // then
@@ -51,7 +51,7 @@ class RemoteServiceTest: XCTestCase {
             
             exp.fulfill()
         }
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     
@@ -62,14 +62,14 @@ class RemoteServiceTest: XCTestCase {
         
         var user = UserDataValue()
         user.name = "AA"
-        let img = UIImage(named: "female", inBundle: testBundle, compatibleWithTraitCollection: nil)
+        let img = UIImage(named: "female", in: testBundle, compatibleWith: nil)
         XCTAssertNotNil(img)
         user.imageData = UIImageJPEGRepresentation(img!, 0.6)
         
         // when
         // this user is created as current user on the server
         
-        let exp = expectationWithDescription("testThatCreateCurrenUserWithNameAndImageCausesNoError")
+        let exp = expectation(description: "testThatCreateCurrenUserWithNameAndImageCausesNoError")
         service.createCurrentUser(user) { (error) -> Void in
             
             // then
@@ -79,7 +79,7 @@ class RemoteServiceTest: XCTestCase {
             
             exp.fulfill()
         }
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     
@@ -91,12 +91,12 @@ class RemoteServiceTest: XCTestCase {
         var user = UserDataValue()
         user.name = "AA"
         
-        let exp = expectationWithDescription("testThatCreateCurrenUserWithNameCausesNoError")
+        let exp = expectation(description: "testThatCreateCurrenUserWithNameCausesNoError")
         service.createCurrentUser(user) { (error) -> Void in
             XCTAssertNil(error, "error: \(error)")
             exp.fulfill()
         }
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
 
 
         // when
@@ -104,7 +104,7 @@ class RemoteServiceTest: XCTestCase {
         
         user.name = "BB"
         
-        let exp1 = expectationWithDescription("testThatCreateCurrenUserWithNameCausesNoError1")
+        let exp1 = expectation(description: "testThatCreateCurrenUserWithNameCausesNoError1")
         service.updateCurrentUser(user) { (error) -> Void in
             
             // then
@@ -113,7 +113,7 @@ class RemoteServiceTest: XCTestCase {
             XCTAssertNil(error, "error: \(error)")
             exp1.fulfill()
         }
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
     
@@ -125,17 +125,17 @@ class RemoteServiceTest: XCTestCase {
         var user = UserDataValue()
         user.name = "AA"
         
-        let exp = expectationWithDescription("testThatFetchCurrentUserWithoutImageCausesNoError")
+        let exp = expectation(description: "testThatFetchCurrentUserWithoutImageCausesNoError")
         service.createCurrentUser(user) { (error) -> Void in
             XCTAssertNil(error, "error: \(error)")
             exp.fulfill()
         }
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         
         // when
         // The userdata is fetched
         
-        let exp1 = expectationWithDescription("testThatFetchCurrentUserWithoutImageCausesNoError1")
+        let exp1 = expectation(description: "testThatFetchCurrentUserWithoutImageCausesNoError1")
         service.fetchCurrentUser { (userData, error) -> Void in
             
             // then
@@ -149,7 +149,7 @@ class RemoteServiceTest: XCTestCase {
             
             exp1.fulfill()
         }
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         
     }
 
@@ -160,21 +160,21 @@ class RemoteServiceTest: XCTestCase {
         
         var user = UserDataValue()
         user.name = "AA"
-        let img = UIImage(named: "female", inBundle: testBundle, compatibleWithTraitCollection: nil)
+        let img = UIImage(named: "female", in: testBundle, compatibleWith: nil)
         XCTAssertNotNil(img)
         user.imageData = UIImageJPEGRepresentation(img!, 0.6)
         
-        let exp = expectationWithDescription("testThatFetchCurrentUserWithImageCausesNoError")
+        let exp = expectation(description: "testThatFetchCurrentUserWithImageCausesNoError")
         service.createCurrentUser(user) { (error) -> Void in
             XCTAssertNil(error, "error: \(error)")
             exp.fulfill()
         }
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         
         // when
         // The userdata is fetched
         
-        let exp1 = expectationWithDescription("testThatFetchCurrentUserWithImageCausesNoError1")
+        let exp1 = expectation(description: "testThatFetchCurrentUserWithImageCausesNoError1")
         service.fetchCurrentUser { (userData, error) -> Void in
             
             // then
@@ -185,11 +185,11 @@ class RemoteServiceTest: XCTestCase {
             XCTAssertNotNil(userData!.name)
             XCTAssertEqual(userData!.name!, "AA")
             XCTAssertNotNil(userData!.imageData)
-            XCTAssertTrue(user.imageData!.isEqualToData(userData!.imageData!))
+            XCTAssertEqual(user.imageData!, userData!.imageData!)
             
             exp1.fulfill()
         }
-        waitForExpectationsWithTimeout(10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         
     }
 

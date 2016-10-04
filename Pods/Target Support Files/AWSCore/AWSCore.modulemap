@@ -3,12 +3,4 @@ framework module AWSCore {
 
   export *
   module * { export * }
-
-  private header "AWSXMLDictionary.h"
-  private header "AWSXMLWriter.h"
-  private header "AWSFMDatabase+Private.h"
-  private header "AWSEXTKeyPathCoding.h"
-  private header "AWSEXTRuntimeExtensions.h"
-  private header "AWSEXTScope.h"
-  private header "AWSmetamacros.h"
 }

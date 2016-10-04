@@ -25,21 +25,21 @@ class AMZRemoteService {
 
     var persistentUserId: String? {
         set {
-            NSUserDefaults.standardUserDefaults().setValue(newValue, forKey: "userId")
-            NSUserDefaults.standardUserDefaults().synchronize()
+            UserDefaults.standard.setValue(newValue, forKey: "userId")
+            UserDefaults.standard.synchronize()
         }
         get {
-            return NSUserDefaults.standardUserDefaults().stringForKey("userId")
+            return UserDefaults.standard.string(forKey: "userId")
         }
     }
     
-    private (set) var identityProvider: AWSCognitoCredentialsProvider?
+    fileprivate (set) var identityProvider: AWSCognitoCredentialsProvider?
     
-    private var deviceDirectoryForUploads: NSURL?
+    fileprivate var deviceDirectoryForUploads: URL?
     
-    private var deviceDirectoryForDownloads: NSURL?
+    fileprivate var deviceDirectoryForDownloads: URL?
     
-    private static var sharedInstance: AMZRemoteService?
+    fileprivate static var sharedInstance: AMZRemoteService?
     
     
     // MARK: - Functions
@@ -61,7 +61,7 @@ class AMZRemoteService {
             region: AMZConstants.DEFAULT_SERVICE_REGION,
             credentialsProvider: identityProvider)
         
-        AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = configuration
+        AWSServiceManager.default().defaultServiceConfiguration = configuration
         
         // The api I am using for uploading to and downloading from S3 (AWSS3TransferManager)can not deal with NSData directly, but uses files.
         // I need to create tmp directories for these files.
@@ -69,12 +69,12 @@ class AMZRemoteService {
         deviceDirectoryForDownloads = createLocalTmpDirectory("download")
     }
 
-    private func createLocalTmpDirectory(let directoryName: String) -> NSURL? {
+    fileprivate func createLocalTmpDirectory(_ directoryName: String) -> URL? {
         do {
-            let url = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent(directoryName)
+            let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(directoryName)
             try
-                NSFileManager.defaultManager().createDirectoryAtURL(
-                    url,
+                FileManager.default.createDirectory(
+                    at: url,
                     withIntermediateDirectories: true,
                     attributes: nil)
             return url
@@ -85,34 +85,34 @@ class AMZRemoteService {
     }
     
     // This is where the saving to S3 (image) and DynamoDB (data) is done.
-    func saveAMZUser(user: AMZUser, completion: ErrorResultBlock)  {
+    func saveAMZUser(_ user: AMZUser, completion: @escaping ErrorResultBlock)  {
         precondition(user.userId != nil, "You should provide a user object with a userId when saving a user")
         
-        let mapper = AWSDynamoDBObjectMapper.defaultDynamoDBObjectMapper()
+        let mapper = AWSDynamoDBObjectMapper.default()
         // We create a task that will save the user to DynamoDB
         // This works because AMZUser extends AWSDynamoDBObjectModel and conforms to AWSDynamoDBModeling
         let saveToDynamoDBTask: AWSTask = mapper.save(user)
         
         // If there is no imageData we only have to save to DynamoDB
         if user.imageData == nil {
-            saveToDynamoDBTask.continueWithBlock({ (task) -> AnyObject? in
-                completion(error: task.error)
+            saveToDynamoDBTask.continue({ (task) -> AnyObject? in
+                completion(task.error as NSError?)
                 return nil
             })
         } else {
             // We have to save data to DynamoDB, and the image to S3
-            saveToDynamoDBTask.continueWithSuccessBlock({ (task) -> AnyObject? in
+            saveToDynamoDBTask.continue(successBlock: { (task) -> AnyObject? in
                 // An example of the AWSTask api. We return a task and continueWithBlock is called on this task.
                 return self.createUploadImageTask(user)
-            }).continueWithBlock({ (task) -> AnyObject? in
-                completion(error: task.error)
+            }).continue({ (task) -> AnyObject? in
+                completion(task.error as NSError?)
                 return nil
             })
         }
-            
+        
     }
     
-    private func createUploadImageTask(user: UserData) -> AWSTask {
+    fileprivate func createUploadImageTask(_ user: UserData) -> AWSTask<AnyObject> {
         guard let userId = user.userId else {
             preconditionFailure("You should provide a user object with a userId when uploading a user image")
         }
@@ -122,30 +122,34 @@ class AMZRemoteService {
         
         // Save the image as a file. The filename is the userId
         let fileName = "\(userId).jpg"
-        let fileURL = deviceDirectoryForUploads!.URLByAppendingPathComponent(fileName)
-        imageData.writeToFile(fileURL.path!, atomically: true)
+        let fileURL = deviceDirectoryForUploads!.appendingPathComponent(fileName)
+        do {
+            try imageData.write(to: fileURL, options: .atomic)
+        } catch let err {
+            print("Error writing image to file: \(err.localizedDescription)")
+        }
         
         // Create a task to upload the file
-        let uploadRequest = AWSS3TransferManagerUploadRequest()
+        let uploadRequest = AWSS3TransferManagerUploadRequest()!
         uploadRequest.body = fileURL
         uploadRequest.key = fileName
         uploadRequest.bucket = AMZConstants.S3BUCKET_USERS
-        let transferManager = AWSS3TransferManager.defaultS3TransferManager()
+        let transferManager = AWSS3TransferManager.default()!
         return transferManager.upload(uploadRequest)
     }
     
-    private func createDownloadImageTask(userId: String) -> AWSTask {
+    fileprivate func createDownloadImageTask(_ userId: String) -> AWSTask<AnyObject> {
         
         // The location where the downloaded file has to be saved on the device
         let fileName = "\(userId).jpg"
-        let fileURL = deviceDirectoryForDownloads!.URLByAppendingPathComponent(fileName)
+        let fileURL = deviceDirectoryForDownloads!.appendingPathComponent(fileName)
         
         // Create a task to download the file
-        let downloadRequest = AWSS3TransferManagerDownloadRequest()
+        let downloadRequest = AWSS3TransferManagerDownloadRequest()!
         downloadRequest.downloadingFileURL = fileURL
         downloadRequest.bucket = AMZConstants.S3BUCKET_USERS
         downloadRequest.key = fileName
-        let transferManager = AWSS3TransferManager.defaultS3TransferManager()
+        let transferManager = AWSS3TransferManager.default()!
         return transferManager.download(downloadRequest)
     }
     
@@ -156,7 +160,7 @@ class AMZRemoteService {
 
 extension AMZRemoteService: RemoteService {
     
-    func createCurrentUser(userData: UserData? , completion: ErrorResultBlock ) {
+    func createCurrentUser(_ userData: UserData? , completion: @escaping ErrorResultBlock ) {
         precondition(currentUser == nil, "currentUser should not exist when createCurrentUser(..) is called")
         precondition(userData == nil || userData!.userId == nil, "You can not create a user with a given userId. UserId's are assigned automatically")
         precondition(persistentUserId == nil, "A persistent userId should not yet exist")
@@ -177,37 +181,37 @@ extension AMZRemoteService: RemoteService {
         
         // Create a new Cognito identity
         let task: AWSTask = identityProvider.getIdentityId()
-        task.continueWithBlock { (task) -> AnyObject? in
+        task.continue({ (task) -> AnyObject? in
             if let error = task.error {
-                completion(error: error)
+                completion(error as NSError?)
             } else {
                 // The new cognito identity token is now stored in the keychain.
                 // Create a new empty user object of type AMZUser
-                var newUser = AMZUser()
+                var newUser = AMZUser()!
                 // Copy the data from the parameter userData
                 if let userData = userData {
                     newUser.updateWithData(userData)
                 }
                 // create a unique ID for the new user
-                newUser.userId = NSUUID().UUIDString
+                newUser.userId = NSUUID().uuidString
                 // Now save the data on AWS. This will save the image on S3, the other data in DynamoDB
                 self.saveAMZUser(newUser) { (error) -> Void in
                     if let error = error {
-                        completion(error: error)
+                        completion(error)
                     } else {
                         // Here we can be certain that the user was saved on AWS, so we set the local user instance
                         self.currentUser = newUser
                         self.persistentUserId = newUser.userId
-                        completion(error: nil)
+                        completion(nil)
                     }
                 }
             }
             return nil
-        }
+        })
     }
 
     
-    func updateCurrentUser(userData: UserData, completion: ErrorResultBlock) {
+    func updateCurrentUser(_ userData: UserData, completion: @escaping ErrorResultBlock) {
         guard var currentUser = currentUser else {
             preconditionFailure("currentUser should already exist when updateCurrentUser(..) is called")
         }
@@ -215,7 +219,7 @@ extension AMZRemoteService: RemoteService {
         precondition(persistentUserId != nil, "A persistent userId should exist")
         
         // create a new empty user
-        var updatedUser = AMZUser()
+        var updatedUser = AMZUser()!
         // apply the new userData
         updatedUser.updateWithData(userData)
         // restore the userId of the current user
@@ -223,34 +227,34 @@ extension AMZRemoteService: RemoteService {
         
         // If there are no changes, there is no need to update.
         if updatedUser.isEqualTo(currentUser) {
-            completion(error: nil)
+            completion(nil)
             return
         }
         
         self.saveAMZUser(updatedUser) { (error) -> Void in
             if let error = error {
-                completion(error: error)
+                completion(error)
             } else {
                 // Here we can be certain that the user was saved on AWS, so we update the local user property
                 currentUser.updateWithData(updatedUser)
-                completion(error: nil)
+                completion(nil)
             }
         }
     }
     
     
-    func fetchCurrentUser(completion: UserDataResultBlock ) {
+    func fetchCurrentUser(_ completion: @escaping UserDataResultBlock ) {
         precondition(persistentUserId != nil, "A persistent userId should exist")
         
         // Task to download the image
         let downloadImageTask: AWSTask = createDownloadImageTask(persistentUserId!)
         
         // Task to fetch the DynamoDB data
-        let mapper = AWSDynamoDBObjectMapper.defaultDynamoDBObjectMapper()
+        let mapper = AWSDynamoDBObjectMapper.default()
         let loadFromDynamoDBTask: AWSTask = mapper.load(AMZUser.self, hashKey: persistentUserId!, rangeKey: nil)
         
         // Download the image
-        downloadImageTask.continueWithBlock { (imageTask) -> AnyObject? in
+        downloadImageTask.continue({ (imageTask) -> AnyObject? in
             var didDownloadImage = false
             if let error = imageTask.error {
                 // If there is an error we will ignore it, it's not fatal. Maybe there is no user image.
@@ -259,32 +263,37 @@ extension AMZRemoteService: RemoteService {
                 didDownloadImage = true
             }
             // Download the data from DynamoDB
-            loadFromDynamoDBTask.continueWithBlock({ (dynamoTask) -> AnyObject? in
+            loadFromDynamoDBTask.continue({ (dynamoTask) -> AnyObject? in
                 if let error = dynamoTask.error {
-                    completion(userData: nil, error: error)
+                    completion(nil, error as NSError?)
                 } else {
                     if let user = dynamoTask.result as? AMZUser {
                         if didDownloadImage {
                             let fileName = "\(self.persistentUserId!).jpg"
-                            let fileURL = self.deviceDirectoryForDownloads!.URLByAppendingPathComponent(fileName)
-                            user.imageData = NSData(contentsOfURL: fileURL)
+                            let fileURL = self.deviceDirectoryForDownloads!.appendingPathComponent(fileName)
+                            do {
+                                try user.imageData = Data(contentsOf: fileURL)
+                            } catch let err {
+                                completion(nil, err as NSError?)
+                                return nil
+                            }
                         }
                         if var currentUser = self.currentUser {
                             currentUser.updateWithData(user)
                         } else {
                             self.currentUser = user
                         }
-                        completion(userData: user, error: nil)
+                        completion(user, nil)
                     } else {
                         // should probably never happen
                         assertionFailure("No userData and no error, why?")
-                        completion(userData: nil, error: nil)
+                        completion(nil, nil)
                     }
                 }
                 return nil
             })
             return nil
-        }
+        })
     }
     
 }

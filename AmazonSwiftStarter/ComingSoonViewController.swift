@@ -10,9 +10,9 @@ import UIKit
 
 class ComingSoonViewController: UIViewController {
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        showMessage("More AWS features will be added here later", type: .Info, options: MessageOptions.Info)
+        showMessage("More AWS features will be added here later", type: .info, options: MessageOptions.Info)
     }
 
 

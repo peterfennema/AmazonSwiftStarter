@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05DBED07F8185FCE18EA5A18 /* Pods_AmazonSwiftStarterTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF3A209A799D3AE10FE037FB /* Pods_AmazonSwiftStarterTests.framework */; };
 		65DA6465ACF4AA812B509535 /* Pods_AmazonSwiftStarter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AACD3733AEB12A038EA0F0 /* Pods_AmazonSwiftStarter.framework */; };
 		D03B30AB1C6E09E200094716 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */; };
 		D072CDA71C7CB05E0084D2BA /* RemoteServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D072CDA61C7CB05E0084D2BA /* RemoteServiceTest.swift */; };
@@ -14,6 +15,8 @@
 		D084CF071C7DB8F3004C9BF4 /* TestAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D084CF061C7DB8F3004C9BF4 /* TestAssets.xcassets */; };
 		D084CF091C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = D084CF081C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift */; };
 		D084CF0B1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D084CF0A1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift */; };
+		D08B11F61DA29FC20032023C /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D08B11F41DA29FC20032023C /* Podfile */; };
+		D08B11F71DA29FC20032023C /* Podfile.lock in Resources */ = {isa = PBXBuildFile; fileRef = D08B11F51DA29FC20032023C /* Podfile.lock */; };
 		D08D01D71C6DEA1C001DC4EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */; };
 		D08D01D91C6DEA1C001DC4EE /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */; };
 		D08D01DC1C6DEA1C001DC4EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D08D01DA1C6DEA1C001DC4EE /* Main.storyboard */; };
@@ -41,15 +44,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01E12AF6C03D72093EE72EA5 /* Pods-AmazonSwiftStarterTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonSwiftStarterTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AmazonSwiftStarterTests/Pods-AmazonSwiftStarterTests.debug.xcconfig"; sourceTree = "<group>"; };
+		06CEC60725CE9C27B5D1C8A9 /* Pods-AmazonSwiftStarterTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonSwiftStarterTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AmazonSwiftStarterTests/Pods-AmazonSwiftStarterTests.release.xcconfig"; sourceTree = "<group>"; };
 		12CD9C23995F0900B6064741 /* Pods-AmazonSwiftStarter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonSwiftStarter.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AmazonSwiftStarter/Pods-AmazonSwiftStarter.debug.xcconfig"; sourceTree = "<group>"; };
 		24DFE47F0E5188FE18C8487E /* Pods-AmazonSwiftStarter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonSwiftStarter.release.xcconfig"; path = "Pods/Target Support Files/Pods-AmazonSwiftStarter/Pods-AmazonSwiftStarter.release.xcconfig"; sourceTree = "<group>"; };
 		58AACD3733AEB12A038EA0F0 /* Pods_AmazonSwiftStarter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AmazonSwiftStarter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF3A209A799D3AE10FE037FB /* Pods_AmazonSwiftStarterTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AmazonSwiftStarterTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D03B30AA1C6E09E200094716 /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		D072CDA61C7CB05E0084D2BA /* RemoteServiceTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceTest.swift; sourceTree = "<group>"; };
 		D072CDA81C7CB8260084D2BA /* RemoteServiceTestTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceTestTools.swift; sourceTree = "<group>"; };
 		D084CF061C7DB8F3004C9BF4 /* TestAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TestAssets.xcassets; sourceTree = "<group>"; };
 		D084CF081C7DD798004C9BF4 /* AMZRemoteServiceWithTestTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMZRemoteServiceWithTestTools.swift; sourceTree = "<group>"; };
 		D084CF0A1C7DD7AE004C9BF4 /* RemoteServiceWithTestToolsFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteServiceWithTestToolsFactory.swift; sourceTree = "<group>"; };
+		D08B11F41DA29FC20032023C /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		D08B11F51DA29FC20032023C /* Podfile.lock */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile.lock; sourceTree = "<group>"; };
 		D08D01D31C6DEA1C001DC4EE /* AmazonSwiftStarter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AmazonSwiftStarter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D08D01D61C6DEA1C001DC4EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D08D01D81C6DEA1C001DC4EE /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
@@ -84,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05DBED07F8185FCE18EA5A18 /* Pods_AmazonSwiftStarterTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,6 +104,8 @@
 			children = (
 				12CD9C23995F0900B6064741 /* Pods-AmazonSwiftStarter.debug.xcconfig */,
 				24DFE47F0E5188FE18C8487E /* Pods-AmazonSwiftStarter.release.xcconfig */,
+				01E12AF6C03D72093EE72EA5 /* Pods-AmazonSwiftStarterTests.debug.xcconfig */,
+				06CEC60725CE9C27B5D1C8A9 /* Pods-AmazonSwiftStarterTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -103,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				58AACD3733AEB12A038EA0F0 /* Pods_AmazonSwiftStarter.framework */,
+				AF3A209A799D3AE10FE037FB /* Pods_AmazonSwiftStarterTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -110,6 +122,8 @@
 		D08D01CA1C6DEA1C001DC4EE = {
 			isa = PBXGroup;
 			children = (
+				D08B11F41DA29FC20032023C /* Podfile */,
+				D08B11F51DA29FC20032023C /* Podfile.lock */,
 				D0CEAA341C847CA00041BFFA /* README.md */,
 				D08D01D51C6DEA1C001DC4EE /* AmazonSwiftStarter */,
 				D08D01EA1C6DEA1C001DC4EE /* AmazonSwiftStarterTests */,
@@ -211,12 +225,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D08D01F01C6DEA1C001DC4EE /* Build configuration list for PBXNativeTarget "AmazonSwiftStarter" */;
 			buildPhases = (
-				08D05A7F880B3CFC6DD18AE0 /* Check Pods Manifest.lock */,
+				08D05A7F880B3CFC6DD18AE0 /* [CP] Check Pods Manifest.lock */,
 				D08D01CF1C6DEA1C001DC4EE /* Sources */,
 				D08D01D01C6DEA1C001DC4EE /* Frameworks */,
 				D08D01D11C6DEA1C001DC4EE /* Resources */,
-				AF6E1A4A06CC23169E0266C8 /* Embed Pods Frameworks */,
-				258A7954630BE42B477F0554 /* Copy Pods Resources */,
+				AF6E1A4A06CC23169E0266C8 /* [CP] Embed Pods Frameworks */,
+				258A7954630BE42B477F0554 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -231,9 +245,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D08D01F31C6DEA1C001DC4EE /* Build configuration list for PBXNativeTarget "AmazonSwiftStarterTests" */;
 			buildPhases = (
+				2E850B15CFBED4C7BBB06924 /* [CP] Check Pods Manifest.lock */,
 				D08D01E31C6DEA1C001DC4EE /* Sources */,
 				D08D01E41C6DEA1C001DC4EE /* Frameworks */,
 				D08D01E51C6DEA1C001DC4EE /* Resources */,
+				94087F1AC368624F11E6F893 /* [CP] Embed Pods Frameworks */,
+				1B210D5C44CFF565676DEA3E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -257,9 +274,11 @@
 				TargetAttributes = {
 					D08D01D21C6DEA1C001DC4EE = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0800;
 					};
 					D08D01E61C6DEA1C001DC4EE = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = D08D01D21C6DEA1C001DC4EE;
 					};
 				};
@@ -290,6 +309,8 @@
 			files = (
 				D08D01E11C6DEA1C001DC4EE /* LaunchScreen.storyboard in Resources */,
 				D08D01DE1C6DEA1C001DC4EE /* Assets.xcassets in Resources */,
+				D08B11F71DA29FC20032023C /* Podfile.lock in Resources */,
+				D08B11F61DA29FC20032023C /* Podfile in Resources */,
 				D08D01DC1C6DEA1C001DC4EE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -305,14 +326,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		08D05A7F880B3CFC6DD18AE0 /* Check Pods Manifest.lock */ = {
+		08D05A7F880B3CFC6DD18AE0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -320,14 +341,29 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		258A7954630BE42B477F0554 /* Copy Pods Resources */ = {
+		1B210D5C44CFF565676DEA3E /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AmazonSwiftStarterTests/Pods-AmazonSwiftStarterTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		258A7954630BE42B477F0554 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -335,14 +371,44 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AmazonSwiftStarter/Pods-AmazonSwiftStarter-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AF6E1A4A06CC23169E0266C8 /* Embed Pods Frameworks */ = {
+		2E850B15CFBED4C7BBB06924 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		94087F1AC368624F11E6F893 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AmazonSwiftStarterTests/Pods-AmazonSwiftStarterTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AF6E1A4A06CC23169E0266C8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -503,6 +569,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = peterfennema.nl.AmazonSwiftStarter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -515,29 +582,34 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = peterfennema.nl.AmazonSwiftStarter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 		D08D01F41C6DEA1C001DC4EE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01E12AF6C03D72093EE72EA5 /* Pods-AmazonSwiftStarterTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = AmazonSwiftStarterTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = peterfennema.nl.AmazonSwiftStarterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AmazonSwiftStarter.app/AmazonSwiftStarter";
 			};
 			name = Debug;
 		};
 		D08D01F51C6DEA1C001DC4EE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06CEC60725CE9C27B5D1C8A9 /* Pods-AmazonSwiftStarterTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = AmazonSwiftStarterTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = peterfennema.nl.AmazonSwiftStarterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AmazonSwiftStarter.app/AmazonSwiftStarter";
 			};
 			name = Release;

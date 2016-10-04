@@ -23,9 +23,6 @@ FOUNDATION_EXPORT NSString *const AWSSimpleDBErrorDomain;
 
 typedef NS_ENUM(NSInteger, AWSSimpleDBErrorType) {
     AWSSimpleDBErrorUnknown,
-    AWSSimpleDBErrorAccessFailure,
-    AWSSimpleDBErrorAuthFailure,
-    AWSSimpleDBErrorAuthMissingFailure,
     AWSSimpleDBErrorAttributeDoesNotExist,
     AWSSimpleDBErrorDuplicateItemName,
     AWSSimpleDBErrorInvalidNextToken,
@@ -68,19 +65,19 @@ typedef NS_ENUM(NSInteger, AWSSimpleDBErrorType) {
 @class AWSSimpleDBUpdateCondition;
 
 /**
- <p></p>
+ <p/>
  Required parameters: [Name, Value]
  */
 @interface AWSSimpleDBAttribute : AWSModel
 
 
 /**
- <p></p>
+ <p/>
  */
 @property (nonatomic, strong) NSString * _Nullable alternateNameEncoding;
 
 /**
- <p></p>
+ <p/>
  */
 @property (nonatomic, strong) NSString * _Nullable alternateValueEncoding;
 
@@ -146,7 +143,7 @@ typedef NS_ENUM(NSInteger, AWSSimpleDBErrorType) {
 @end
 
 /**
- <p></p>
+ <p/>
  Required parameters: [Name]
  */
 @interface AWSSimpleDBDeletableAttribute : AWSModel
@@ -321,14 +318,14 @@ typedef NS_ENUM(NSInteger, AWSSimpleDBErrorType) {
 @end
 
 /**
- <p></p>
+ <p/>
  Required parameters: [Name, Attributes]
  */
 @interface AWSSimpleDBItem : AWSModel
 
 
 /**
- <p></p>
+ <p/>
  */
 @property (nonatomic, strong) NSString * _Nullable alternateNameEncoding;
 
@@ -409,7 +406,7 @@ typedef NS_ENUM(NSInteger, AWSSimpleDBErrorType) {
 @end
 
 /**
- <p></p>
+ <p/>
  Required parameters: [Name, Value]
  */
 @interface AWSSimpleDBReplaceableAttribute : AWSModel
@@ -433,7 +430,7 @@ typedef NS_ENUM(NSInteger, AWSSimpleDBErrorType) {
 @end
 
 /**
- <p></p>
+ <p/>
  Required parameters: [Name, Attributes]
  */
 @interface AWSSimpleDBReplaceableItem : AWSModel

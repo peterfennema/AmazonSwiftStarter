@@ -21,6 +21,8 @@
 #import "AWSLogging.h"
 #import "AWSSynchronizedMutableDictionary.h"
 
+static NSString *const AWSInfoS3TransferManager = @"S3TransferManager";
+
 // Private constants
 NSUInteger const AWSS3TransferManagerMinimumPartSize = 5 * 1024 * 1024; // 5MB
 NSString *const AWSS3TransferManagerCacheName = @"com.amazonaws.AWSS3TransferManager.CacheName";
@@ -57,21 +59,38 @@ NSString *const AWSS3TransferManagerUserAgentPrefix = @"transfer-manager";
 
 @end
 
+@interface AWSS3()
+
+- (instancetype)initWithConfiguration:(AWSServiceConfiguration *)configuration;
+
+@end
+
 @implementation AWSS3TransferManager
 
 static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 
 + (instancetype)defaultS3TransferManager {
-    if (![AWSServiceManager defaultServiceManager].defaultServiceConfiguration) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"`defaultServiceConfiguration` is `nil`. You need to set it before using this method."
-                                     userInfo:nil];
-    }
-
     static AWSS3TransferManager *_defaultS3TransferManager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _defaultS3TransferManager = [[AWSS3TransferManager alloc] initWithConfiguration:[AWSServiceManager defaultServiceManager].defaultServiceConfiguration
+        AWSServiceConfiguration *serviceConfiguration = nil;
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] defaultServiceInfo:AWSInfoS3TransferManager];
+        if (serviceInfo) {
+            serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                               credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+        }
+
+        if (!serviceConfiguration) {
+            serviceConfiguration = [AWSServiceManager defaultServiceManager].defaultServiceConfiguration;
+        }
+
+        if (!serviceConfiguration) {
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                           reason:@"The service configuration is `nil`. You need to configure `Info.plist` or set `defaultServiceConfiguration` before using this method."
+                                         userInfo:nil];
+        }
+
+        _defaultS3TransferManager = [[AWSS3TransferManager alloc] initWithConfiguration:serviceConfiguration
                                                                               cacheName:AWSS3TransferManagerCacheName];
     });
 
@@ -91,7 +110,23 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 }
 
 + (instancetype)S3TransferManagerForKey:(NSString *)key {
-    return [_serviceClients objectForKey:key];
+    @synchronized(self) {
+        AWSS3TransferManager *serviceClient = [_serviceClients objectForKey:key];
+        if (serviceClient) {
+            return serviceClient;
+        }
+
+        AWSServiceInfo *serviceInfo = [[AWSInfo defaultAWSInfo] serviceInfo:AWSInfoS3TransferManager
+                                                                     forKey:key];
+        if (serviceInfo) {
+            AWSServiceConfiguration *serviceConfiguration = [[AWSServiceConfiguration alloc] initWithRegion:serviceInfo.region
+                                                                                        credentialsProvider:serviceInfo.cognitoCredentialsProvider];
+            [AWSS3TransferManager registerS3TransferManagerWithConfiguration:serviceConfiguration
+                                                                      forKey:key];
+        }
+
+        return [_serviceClients objectForKey:key];
+    }
 }
 
 + (void)removeS3TransferManagerForKey:(NSString *)key {
@@ -119,13 +154,10 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
     if (self = [super init]) {
         AWSServiceConfiguration *_configuration = [configuration copy];
         [_configuration addUserAgentProductToken:AWSS3TransferManagerUserAgentPrefix];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         _s3 = [[AWSS3 alloc] initWithConfiguration:_configuration];
-#pragma clang diagnostic pop
 
         _cache = [[AWSTMCache alloc] initWithName:cacheName
-                                      rootPath:[NSTemporaryDirectory() stringByAppendingPathComponent:AWSS3TransferManagerCacheName]];
+                                         rootPath:[NSTemporaryDirectory() stringByAppendingPathComponent:AWSS3TransferManagerCacheName]];
         _cache.diskCache.byteLimit = AWSS3TransferManagerByteLimitDefault;
         _cache.diskCache.ageLimit = AWSS3TransferManagerAgeLimitDefault;
     }

@@ -10,7 +10,7 @@ import UIKit
 
 protocol EditProfileViewControllerDelegate: class {
     
-    func editProfileViewControllerDidFinishEditing(controller: EditProfileViewController)
+    func editProfileViewControllerDidFinishEditing(_ controller: EditProfileViewController)
     
 }
 
@@ -18,7 +18,7 @@ class EditProfileViewController: UIViewController {
     
     weak var delegate: EditProfileViewControllerDelegate?
     
-    private var imageModified: Bool = false
+    fileprivate var imageModified: Bool = false
     
     @IBOutlet weak var nameTextField: UITextField!
     
@@ -26,7 +26,7 @@ class EditProfileViewController: UIViewController {
     
     @IBOutlet weak var doneButton: ButtonWithActivityIndicator!
     
-    @IBAction func didTapDone(sender: UIButton) {
+    @IBAction func didTapDone(_ sender: UIButton) {
         doneButton.startAnimating()
         var userData = UserDataValue()
         userData.updateWithData(RemoteServiceFactory.getDefaultService().currentUser!)
@@ -40,7 +40,7 @@ class EditProfileViewController: UIViewController {
             imageModified = false
         }
         RemoteServiceFactory.getDefaultService().updateCurrentUser(userData) { (error) -> Void in
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
                 self.doneButton.stopAnimating()
                 if let delegate = self.delegate {
                     delegate.editProfileViewControllerDidFinishEditing(self)
@@ -55,25 +55,25 @@ class EditProfileViewController: UIViewController {
             preconditionFailure("CurrentUser must be available")
         }
         updateUI(currentUser)
-        imageView.userInteractionEnabled = true
-        let tapRec = UITapGestureRecognizer(target: self, action: "didTapImageView:")
+        imageView.isUserInteractionEnabled = true
+        let tapRec = UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.didTapImageView(_:)))
         imageView.addGestureRecognizer(tapRec)
-        showMessage("After tapping \"Done\" your name will be saved to DynamoDB. Your image will be saved to S3.", type: .Info, options: MessageOptions.Info)
+        showMessage("After tapping \"Done\" your name will be saved to DynamoDB. Your image will be saved to S3.", type: .info, options: MessageOptions.Info)
     }
     
-    func didTapImageView(recognizer: UIGestureRecognizer) {
+    func didTapImageView(_ recognizer: UIGestureRecognizer) {
         let picker = UIImagePickerController()
-        picker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        picker.sourceType = UIImagePickerControllerSourceType.photoLibrary
         picker.delegate = self
-        presentViewController(picker, animated: true, completion: nil)
+        present(picker, animated: true, completion: nil)
     }
     
-    func updateUI(userData: UserData) {
+    func updateUI(_ userData: UserData) {
         nameTextField.text = userData.name
         if userData.imageData == nil {
             imageView.image = UIImage(named: "unknownUser")
         } else {
-            imageView.image = UIImage(data: userData.imageData!)
+            imageView.image = UIImage(data: userData.imageData! as Data)
         }
     }
 
@@ -82,16 +82,16 @@ class EditProfileViewController: UIViewController {
 
 extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let capturedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
             self.imageView.image = capturedImage
             imageModified = true
-            picker.dismissViewControllerAnimated(true, completion: nil)
+            picker.dismiss(animated: true, completion: nil)
         }
     }
     
-    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        picker.dismissViewControllerAnimated(true, completion: nil)
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
     }
 
     
