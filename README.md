@@ -13,12 +13,14 @@ This version of the app is prepared to access AWS, but in reality it does not ye
 
 Example of a clean separation between the backend logic and the other code of the app. This clean separation makes it easier to change backend providers if needed 😉
 
+### Version 1.1
+
+Xcode 8
+Swift 3
+AWS-SDK-iOS 2.4.9
+
 ### Version 1.0 
 
 Xcode 7
 Swift 2.2
-
-### Version 1.1
-
-Xcode 7
-Swift 3
+AWS-SDK-iOS 2.3.5
