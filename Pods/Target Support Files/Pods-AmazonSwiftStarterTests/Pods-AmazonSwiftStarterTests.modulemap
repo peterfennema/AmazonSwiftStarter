@@ -1,0 +1,6 @@
+framework module Pods_AmazonSwiftStarterTests {
+  umbrella header "Pods-AmazonSwiftStarterTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

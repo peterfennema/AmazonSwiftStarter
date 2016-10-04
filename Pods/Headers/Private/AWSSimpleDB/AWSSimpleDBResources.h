@@ -1,1 +1,0 @@
-../../../AWSSimpleDB/AWSSimpleDB/AWSSimpleDBResources.h

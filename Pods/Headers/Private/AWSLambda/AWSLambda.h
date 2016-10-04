@@ -1,1 +1,0 @@
-../../../AWSLambda/AWSLambda/AWSLambda.h

@@ -1,1 +1,0 @@
-../../../AWSCognito/CognitoSync/AWSCognitoSyncModel.h

@@ -1,1 +1,0 @@
-../../../AWSLambda/AWSLambda/AWSLambdaResources.h

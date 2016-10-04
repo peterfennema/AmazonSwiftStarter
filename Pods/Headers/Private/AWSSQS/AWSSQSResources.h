@@ -1,1 +1,0 @@
-../../../AWSSQS/AWSSQS/AWSSQSResources.h

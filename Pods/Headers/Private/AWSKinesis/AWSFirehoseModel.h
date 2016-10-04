@@ -1,1 +1,0 @@
-../../../AWSKinesis/AWSKinesis/AWSFirehoseModel.h

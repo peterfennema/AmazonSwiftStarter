@@ -1,1 +1,0 @@
-../../../AWSMobileAnalytics/AWSMobileAnalytics/Internal/AWSMobileAnalyticsFileManager.h
